@@ -14,7 +14,6 @@ public class PlayerData {
     public ArrayList<String> achievements = new ArrayList<>();
     public int playtime = 0;
     public boolean isVip = false;
-    public String customPrefix = "<none>";
     public PlayerData(){
 
     }

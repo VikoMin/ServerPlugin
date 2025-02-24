@@ -44,7 +44,6 @@ import static plugin.discord.Embed.banEmbed;
 import static plugin.discord.Warnings.noDataFound;
 import static plugin.etc.Ranks.Rank;
 import static plugin.etc.Ranks.getRank;
-import static plugin.functions.MongoDB.MongoDbPlayerRankCheck;
 import static plugin.functions.MongoDB.MongoDbUpdate;
 import static plugin.functions.Other.*;
 import static plugin.utils.FindDocument.getPlayerData;
@@ -276,7 +275,6 @@ public class Bot {
                 if (player == null){
                     return;
                 }
-                MongoDbPlayerRankCheck(data.uuid);
             }
             case "gameover" -> {
                 if (!isModerator(listener)){

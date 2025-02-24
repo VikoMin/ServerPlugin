@@ -43,7 +43,7 @@ public class Other {
         Date date = new Date();
         if (lastBan > date.getTime()) {
             String timeUntilUnban = Bundle.formatDuration(lastBan - date.getTime());
-            player.kick("[red]Ты был забанен!\n\n" +"[white]Время: " + timeUntilUnban + "\n[white]Твой ID: " + data.id + "\nЕсли ты думаешь, что это ошибка, то ты можешь подать апелляцию в дискорд сервере: " + discordUrl, 0);
+            player.kick("[red]You have been banned!\n\n" +"[white]Duration: " + timeUntilUnban + " until unban\n\nIf you think this is a mistake, make sure to appeal ban in our discord: " + discordUrl, 0);
         }
     }
     public static void kickIfBanned(Player player){
@@ -55,7 +55,7 @@ public class Other {
         Date date = new Date();
         if (lastBan > date.getTime()) {
             String timeUntilUnban = Bundle.formatDuration(lastBan - date.getTime());
-            player.kick("[red]Ты был забанен!\n\n" +"[white]Время: " + timeUntilUnban + "\n[white]Твой ID: " + data.id + "\nЕсли ты думаешь, что это ошибка, то ты можешь подать апелляцию в дискорд сервере: " + discordUrl, 0);
+            player.kick("[red]You have been banned!\n\n" +"[white]Duration: " + timeUntilUnban + " until unban\n\nIf you think this is a mistake, make sure to appeal ban in our discord: " + discordUrl, 0);
         }
     }
     public static void statsMenu(Player player, Player reqPlayer){

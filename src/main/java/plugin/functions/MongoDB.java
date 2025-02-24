@@ -14,9 +14,6 @@ import mindustry.net.Administration;
 import mindustry.net.NetConnection;
 import plugin.models.PlayerData;
 
-import plugin.etc.Ranks;
-
-import java.util.Objects;
 import java.util.Optional;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -36,18 +33,6 @@ public class MongoDB {
         data.ip = plr.con.address;
         data.uuid = plr.uuid();
         newCollection.replaceOne(eq("_id", data.id), data, new ReplaceOptions().upsert(true));
-    }
-    public static void MongoDbPlayerRankCheck(String uuid) {
-        Player eventPlayer = Groups.player.find(p -> p.uuid().contains(uuid));
-        if (eventPlayer == null) return;
-        PlayerData data = getPlayerData(uuid);
-        String tempName = data.rawName;
-        if (!Objects.equals(data.customPrefix, "<none>")){
-            eventPlayer.name = data.customPrefix + " [" + "#" + eventPlayer.color.toString() + "]" + tempName;
-        } else {
-            eventPlayer.name = Ranks.getRank(data.rank).getPrefix() +" [" + "#" + eventPlayer.color.toString() + "]" + tempName;
-        }
-
     }
     public static void MongoDbPlayerIpCheck(NetConnection player){
         PlayerData data = getPlayerDataByIP(player.address);

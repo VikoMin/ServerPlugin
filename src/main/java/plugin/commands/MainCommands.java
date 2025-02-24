@@ -33,11 +33,9 @@ import static plugin.Plugin.newCollection;
 import static plugin.Plugin.servers;
 import static plugin.commands.Menus.achMenu;
 import static plugin.commands.history.History.historyPlayers;
-import static plugin.functions.MongoDB.MongoDbPlayerRankCheck;
+import static plugin.etc.Ranks.getRank;
 import static plugin.functions.MongoDB.MongoDbUpdate;
 import static plugin.functions.Other.statsMenu;
-import static plugin.utils.Checks.isConsole;
-import static plugin.utils.Checks.isVipOrOwner;
 import static plugin.utils.FindDocument.getPlayerData;
 import static plugin.utils.Utilities.*;
 
@@ -64,6 +62,8 @@ public class MainCommands {
             StringBuilder list = new StringBuilder();
             for (Player plr : Groups.player){
                 PlayerData data = newCollection.find(Filters.eq("uuid", plr.uuid())).first();
+                if (data == null)
+                    continue;
                 int id = data.id;
                 list.append(plr.name()+ "; [white]ID: " + id + "\n");
             }
@@ -71,7 +71,7 @@ public class MainCommands {
         });
         handler.<Player>register("js", "<code...>", "Execute JavaScript code.", (args, player) -> {
             PlayerData data = newCollection.find(Filters.eq("uuid", player.uuid())).first();
-            if (player.admin() && isConsole(player.uuid())) {
+            if (player.admin() && getRank(data.rank).hasJS()) {
                 try {
                     String output = mods.getScripts().runConsole(args[0]);
                     player.sendMessage("> " + ("[#ff341c]" + output));
@@ -192,19 +192,6 @@ public class MainCommands {
             } else {
                 player.sendMessage("[red]Invalid type!");
             }
-        });
-        handler.<Player>register("customprefix", "<prefix>", "Sets custom prefix (VIP ONLY)!", (args, player) -> {
-            PlayerData data = getPlayerData(player.uuid());
-            if (!isVipOrOwner(player.uuid())){
-                player.sendMessage("[red]You dont have VIP!"); return;
-            }
-            if (args[0].length() > 60){
-                player.sendMessage("Prefix is too long! Make it shorter:" + args[0].length() + "/" + 60); return;
-            }
-            data.customPrefix = args[0];
-            MongoDbUpdate(data);
-            player.sendMessage("Prefix has been changed!");
-            MongoDbPlayerRankCheck(player.uuid());
         });
         handler.<Player>register("achievements",  "Views your achievements", (args, player) -> {
             achMenu(player);

@@ -2,7 +2,6 @@ package plugin.utils;
 
 import com.mongodb.client.model.Filters;
 import plugin.models.PlayerData;
-import mindustry.Vars;
 
 import java.util.regex.Pattern;
 

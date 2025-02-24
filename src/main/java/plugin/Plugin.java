@@ -89,7 +89,6 @@ public class Plugin extends mindustry.mod.Plugin implements ApplicationListener{
             if(!plr.admin) welcomeMenu(plr);
             PlayerData data = findPlayerDataOrCreate(event.player);
             fillData(data, event.player);
-            MongoDbPlayerRankCheck(plr.uuid());
             kickIfBanned(event.player);
             String joinMessage = data.joinMessage;
             if (joinMessage.endsWith(" ")){

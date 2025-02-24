@@ -1,25 +1,36 @@
 package plugin.etc;
 
 public class Ranks {
-    public enum Rank {
-        None("none", ""),
-        Player("[white]Player", ""),
-        Verified("[blue]Verified", "[blue]<V>"),
-        Moderator("[blue]Moderator", "[blue]<M>"),
-        JS("[purple]JS", "[purple]<JS>"),
-        Administrator("[#00bfff]Administrator", "[#00bfff]<A>");
-        private final String name, prefix;
+    public enum Perms {
+        None(),
+        Admin(),
+        JS()
+    }
 
-        Rank(String name, String prefix) {
+    public enum Rank {
+        None("none", Perms.None),
+        Player("[white]Player", Perms.None),
+        Verified("[blue]Verified", Perms.None),
+        Moderator("[blue]Moderator", Perms.Admin),
+        JS("[purple]JS", Perms.JS),
+        Administrator("[#00bfff]Administrator", Perms.JS);
+        private final String name;
+        private final Perms perms;
+
+        Rank(String name, Perms perms) {
             this.name = name;
-            this.prefix = prefix;
+            this.perms = perms;
         }
 
         public String getName() {
             return name;
         }
-        public String getPrefix(){
-            return prefix;
+
+        public boolean isAdmin() {
+            return perms.ordinal() >= Perms.Admin.ordinal();
+        }
+        public boolean hasJS() {
+            return perms.ordinal() >= Perms.JS.ordinal();
         }
     }
 

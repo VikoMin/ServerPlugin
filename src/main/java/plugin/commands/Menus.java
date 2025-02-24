@@ -7,7 +7,6 @@ import plugin.models.PlayerData;
 import java.util.ArrayList;
 import java.util.List;
 
-import static plugin.functions.MongoDB.MongoDbPlayerRankCheck;
 import static plugin.functions.MongoDB.MongoDbUpdate;
 import static plugin.utils.FindDocument.getPlayerData;
 
@@ -26,14 +25,10 @@ public class Menus {
                 case -1,0 -> {}
                 case 1 -> {
                     player.sendMessage("Resetted");
-                    data.customPrefix = "<none>";
                     MongoDbUpdate(data);
-                    MongoDbPlayerRankCheck(player.uuid());
                 }
                 default -> {
-                    data.customPrefix = "[purple]<" + data.achievements.get(option - 2) + "[purple]>";
                     MongoDbUpdate(data);
-                    MongoDbPlayerRankCheck(player.uuid());
                 }
             }
         })));
