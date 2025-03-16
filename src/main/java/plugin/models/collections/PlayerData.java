@@ -1,7 +1,7 @@
-package plugin.models;
+package plugin.models.collections;
 
 import java.util.ArrayList;
-public class PlayerDataCollection {
+public class PlayerData {
     public int id;
     public String uuid;
     public ArrayList<String> names = new ArrayList<>();
@@ -14,8 +14,8 @@ public class PlayerDataCollection {
     public ArrayList<String> achievements = new ArrayList<>();
     public int playtime = 0;
     public boolean isVip = false;
-    public PlayerDataCollection(){} //necessary for mongodb
-    public PlayerDataCollection(int id, String uuid){
+    public PlayerData(){} //necessary for mongodb
+    public PlayerData(int id, String uuid){
         this.uuid = uuid;
         this.id = id;
     }

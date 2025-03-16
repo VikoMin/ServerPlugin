@@ -7,7 +7,7 @@ import arc.util.Timer;
 import org.json.simple.parser.ParseException;
 import plugin.discord.Bot;
 import plugin.etc.Ranks;
-import plugin.models.PlayerData;
+import plugin.models.wrappers.PlayerData;
 
 import java.io.IOException;
 

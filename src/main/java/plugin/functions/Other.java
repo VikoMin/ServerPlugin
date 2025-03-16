@@ -7,7 +7,7 @@ import mindustry.gen.Groups;
 import mindustry.gen.Player;
 import mindustry.net.NetConnection;
 import mindustry.server.ServerControl;
-import plugin.models.PlayerData;
+import plugin.models.wrappers.PlayerData;
 import plugin.utils.MenuHandler;
 import useful.Bundle;
 

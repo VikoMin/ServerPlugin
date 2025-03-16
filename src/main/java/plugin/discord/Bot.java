@@ -1,6 +1,5 @@
 package plugin.discord;
 
-import arc.Core;
 import arc.Events;
 import arc.util.*;
 import arc.util.Timer;
@@ -19,7 +18,7 @@ import org.javacord.api.entity.message.MessageAttachment;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
 import plugin.ConfigJson;
-import plugin.models.PlayerData;
+import plugin.models.wrappers.PlayerData;
 import plugin.utils.Utilities;
 import useful.Bundle;
 
@@ -31,7 +30,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static arc.util.Strings.*;
-import static mindustry.Vars.mods;
 import static mindustry.Vars.netServer;
 import static plugin.ConfigJson.discordUrl;
 import static plugin.discord.DiscordFunctions.*;

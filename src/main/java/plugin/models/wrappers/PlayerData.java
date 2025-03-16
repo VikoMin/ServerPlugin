@@ -1,4 +1,4 @@
-package plugin.models;
+package plugin.models.wrappers;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCursor;
@@ -15,13 +15,13 @@ import java.util.regex.Pattern;
 import static com.mongodb.client.model.Filters.eq;
 import static plugin.Plugin.players;
 
-public final class PlayerData {
-    private final PlayerDataCollection collection;
+public class PlayerData {
+    private final plugin.models.collections.PlayerData collection;
 
     public static ArrayList<PlayerData> findByName(String name) {
         ArrayList<PlayerData> output = new ArrayList<>();
         Pattern pattern = Pattern.compile(".?" + name + ".?", Pattern.CASE_INSENSITIVE);
-        try (MongoCursor<PlayerDataCollection> cursor = players.find(Filters.regex("name", pattern)).limit(25).iterator()) {
+        try (MongoCursor<plugin.models.collections.PlayerData> cursor = players.find(Filters.regex("name", pattern)).limit(25).iterator()) {
             while (cursor.hasNext())
                 output.add(new PlayerData(cursor.next()));
         }
@@ -30,14 +30,14 @@ public final class PlayerData {
 
     public static ArrayList<PlayerData> findByIp(String ip) {
         ArrayList<PlayerData> output = new ArrayList<>();
-        try (MongoCursor<PlayerDataCollection> cursor = players.find(Filters.in("ips", ip)).limit(25).iterator()) {
+        try (MongoCursor<plugin.models.collections.PlayerData> cursor = players.find(Filters.in("ips", ip)).limit(25).iterator()) {
             while (cursor.hasNext())
                 output.add(new PlayerData(cursor.next()));
         }
         return output;
     }
 
-    public PlayerData(PlayerDataCollection collection){
+    public PlayerData(plugin.models.collections.PlayerData collection){
         this.collection = collection;
     }
     public PlayerData(int id) {
@@ -52,7 +52,7 @@ public final class PlayerData {
     }
     public PlayerData(Player player) {
         collection = Optional.ofNullable(players.find(eq("uuid", player.uuid())).first()).orElse(
-                new PlayerDataCollection(getNextID(), player.uuid()));
+                new plugin.models.collections.PlayerData(getNextID(), player.uuid()));
         if (!collection.names.contains(player.plainName())) collection.names.add(player.plainName());
         collection.rawName = player.name();
         if (!collection.ips.contains(player.con.address)) collection.ips.add(player.con.address);
@@ -68,7 +68,7 @@ public final class PlayerData {
     }
 
     public static int getNextID() {
-        PlayerDataCollection data = players.find().sort(new BasicDBObject("_id", -1)).first();
+        plugin.models.collections.PlayerData data = players.find().sort(new BasicDBObject("_id", -1)).first();
         return (data == null) ? 0 : data.id + 1;
     }
 
@@ -116,46 +116,68 @@ public final class PlayerData {
 
     //getters
     public int getId() {
-        return collection.id;
+        if (isExist())
+            return collection.id;
+        return -1;
     }
 
     public String getUuid() {
-        return collection.uuid;
+        if (isExist())
+            return collection.uuid;
+        return "";
     }
 
     public ArrayList<String> getNames() {
-        return collection.names;
+        if (isExist())
+            return collection.names;
+        return new ArrayList<>();
     }
 
     public String getLastName() {
-        return collection.names.get(collection.names.size() - 1);
+        if (isExist())
+            return collection.names.get(collection.names.size() - 1);
+        return "";
     }
 
     public Ranks.Rank getRank() {
-        return Ranks.getRank(collection.rank);
+        if (isExist())
+            return Ranks.getRank(collection.rank);
+        return Ranks.Rank.None;
     }
 
     public String getJoinMessage() {
-        return collection.joinMessage;
+        if (isExist())
+            return collection.joinMessage;
+        return "@ joined!";
     }
 
     public ArrayList<String> getIPs() {
-        return collection.ips;
+        if (isExist())
+            return collection.ips;
+        return new ArrayList<>();
     }
 
     public long getLastBanTime() {
-        return collection.lastBan;
+        if (isExist())
+            return collection.lastBan;
+        return -1;
     }
 
     public long getDiscordId() {
-        return collection.discordId;
+        if (isExist())
+            return collection.discordId;
+        return 0;
     }
 
     public ArrayList<String> getAchievements() {
-        return collection.achievements;
+        if (isExist())
+            return collection.achievements;
+        return new ArrayList<>();
     }
 
     public int getPlaytime() {
-        return collection.playtime;
+        if (isExist())
+            return collection.playtime;
+        return 0;
     }
 }

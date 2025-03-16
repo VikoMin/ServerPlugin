@@ -11,7 +11,7 @@ import mindustry.gen.Player;
 import mindustry.net.Administration.TraceInfo;
 import mindustry.net.Packets.KickReason;
 import plugin.discord.Bot;
-import plugin.models.PlayerData;
+import plugin.models.wrappers.PlayerData;
 import useful.Action;
 import useful.Action2;
 import useful.Bundle;

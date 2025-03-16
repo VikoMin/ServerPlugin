@@ -4,7 +4,7 @@ import arc.util.Log;
 import mindustry.gen.Player;
 import plugin.commands.ChatCommands;
 import plugin.commands.annotations.ChatCommand;
-import plugin.models.PlayerData;
+import plugin.models.wrappers.PlayerData;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -45,7 +45,7 @@ public class ChatListener {
         ChatCommand command = method.getAnnotation(ChatCommand.class);
         int maxArgsCount = Math.max(command.minArgsCount(), command.maxArgsCount());
         List<String> resArgs;
-        if (!new PlayerData(player).getRank().hasRank(command.requiredRank())) {
+        if (!new PlayerData(player).getRank().equal(command.requiredRank())) {
             player.sendMessage("Access denied");
             return;
         } else if (args.size() < command.minArgsCount()) {

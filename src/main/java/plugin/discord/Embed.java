@@ -2,7 +2,7 @@ package plugin.discord;
 
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.Role;
-import plugin.models.PlayerData;
+import plugin.models.wrappers.PlayerData;
 import plugin.utils.Utilities;
 import useful.Bundle;
 
@@ -10,7 +10,7 @@ import java.awt.*;
 import java.time.Duration;
 import java.util.Optional;
 
-public class Embed {
+public class    Embed {
 
     public static EmbedBuilder banEmbed(PlayerData data, String reason, long banTime, String moderator){
         return new EmbedBuilder()

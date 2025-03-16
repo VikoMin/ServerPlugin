@@ -2,7 +2,7 @@ package plugin.commands;
 
 import mindustry.gen.Player;
 import plugin.etc.Menu;
-import plugin.models.PlayerData;
+import plugin.models.wrappers.PlayerData;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -4,7 +4,7 @@ import mindustry.gen.Call;
 import mindustry.ui.Menus;
 import org.javacord.api.event.message.MessageCreateEvent;
 import plugin.etc.Ranks;
-import plugin.models.PlayerData;
+import plugin.models.wrappers.PlayerData;
 
 import static plugin.ConfigJson.discordUrl;
 

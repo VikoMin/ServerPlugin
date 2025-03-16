@@ -24,8 +24,7 @@ import org.json.simple.parser.ParseException;
 import plugin.commands.handlers.ChatListener;
 import plugin.discord.Bot;
 import plugin.etc.AntiVpn;
-import plugin.models.PlayerData;
-import plugin.models.PlayerDataCollection;
+import plugin.models.collections.PlayerData;
 import useful.Bundle;
 
 import java.io.File;
@@ -51,7 +50,7 @@ import static plugin.functions.Other.welcomeMenu;
 public class Plugin extends mindustry.mod.Plugin implements ApplicationListener {
     public static MongoClient mongoClient;
     public static MongoDatabase db;
-    public static MongoCollection<PlayerDataCollection> players;
+    public static MongoCollection<PlayerData> players;
     public static JSONObject servers;
 
     static {
@@ -70,7 +69,7 @@ public class Plugin extends mindustry.mod.Plugin implements ApplicationListener 
         CodecRegistry pojoCodecRegistry = fromRegistries(getDefaultCodecRegistry(), fromProviders(pojoCodecProvider));
         mongoClient = MongoClients.create(string);
         db = mongoClient.getDatabase("mindustry").withCodecRegistry(pojoCodecRegistry);
-        players = db.getCollection("players", PlayerDataCollection.class);
+        players = db.getCollection("players", PlayerData.class);
         File dir = new File(Vars.tmpDirectory.absolutePath());
         if (!dir.exists())
             dir.mkdir();
@@ -87,7 +86,7 @@ public class Plugin extends mindustry.mod.Plugin implements ApplicationListener 
         Events.on(EventType.PlayerJoin.class, event -> {
             Player plr = event.player;
             if (!plr.admin) welcomeMenu(plr);
-            PlayerData data = new PlayerData(event.player);
+            plugin.models.wrappers.PlayerData data = new plugin.models.wrappers.PlayerData(event.player);
             kickIfBanned(event.player);
             String joinMessage = data.getJoinMessage().trim();
             Call.sendMessage(joinMessage.replace("@", plr.name()) + " [grey][" + data.getId() + "]");
@@ -158,7 +157,7 @@ public class Plugin extends mindustry.mod.Plugin implements ApplicationListener 
         Events.on(EventType.PlayerLeave.class, event -> {
             Player player = event.player;
             historyPlayers.remove(player.uuid());
-            PlayerData data = new PlayerData(player);
+            plugin.models.wrappers.PlayerData data = new plugin.models.wrappers.PlayerData(player);
             Call.sendMessage(player.name() + "[white] left " + "[grey][" + data.getId() + "]");
             Log.info(player.plainName() + " left " + "[" + data.getId() + "]");
         });

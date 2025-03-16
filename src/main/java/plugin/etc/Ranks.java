@@ -19,13 +19,15 @@ public class Ranks {
         public String getName() {
             return name;
         }
-        public boolean hasRank(Rank rank){
+        public boolean equal(Rank rank){
             return this.ordinal() >= rank.ordinal();
         }
     }
 
     public static Rank getRank(int ordinal){
-        return Arrays.stream(Rank.values()).toList().get(ordinal);
+        if (ordinal < Rank.values().length)
+            return Arrays.stream(Rank.values()).toList().get(ordinal);
+        return Rank.None;
     }
     public static Rank getRank(String name) {
         switch (name.toLowerCase()) {

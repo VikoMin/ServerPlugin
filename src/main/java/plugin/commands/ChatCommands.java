@@ -2,7 +2,6 @@ package plugin.commands;
 
 import arc.Events;
 import arc.struct.Seq;
-import arc.util.CommandHandler;
 import arc.util.Strings;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.FindIterable;
@@ -17,8 +16,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import plugin.commands.annotations.ChatCommand;
 import plugin.etc.Ranks;
-import plugin.models.PlayerData;
-import plugin.models.PlayerDataCollection;
+import plugin.models.collections.PlayerData;
 import useful.Bundle;
 
 import java.time.Duration;
@@ -54,7 +52,7 @@ public class ChatCommands {
     public void players(Player player, List<String> args) {
         StringBuilder list = new StringBuilder();
         for (Player plr : Groups.player) {
-            PlayerData data = new PlayerData(plr);
+            plugin.models.wrappers.PlayerData data = new plugin.models.wrappers.PlayerData(plr);
             if (data.isExist()) {
                 list.append(plr.name()).append("; [white]ID: ").append(data.getId()).append("\n");
             }
@@ -163,7 +161,7 @@ public class ChatCommands {
 
     @ChatCommand(name = "joinmessage", args = "<str message>", description = "Makes custom join message! @ -> your name. Make sure this message wont break any rule!", minArgsCount = 1)
     public void joinMessage(Player player, ArrayList<String> args) {
-        PlayerData data = new PlayerData(player);
+        plugin.models.wrappers.PlayerData data = new plugin.models.wrappers.PlayerData(player);
         if (args.get(0).length() >= 45) {
             player.sendMessage("Too much symbols! Limit is 45");
         } else {
@@ -176,8 +174,8 @@ public class ChatCommands {
     public void leaderboard(Player player, ArrayList<String> args) {
         StringBuilder list = new StringBuilder();
         list.append("[orange]Playtime leaderboard: \n");
-        FindIterable<PlayerDataCollection> sort = players.find().sort(new BasicDBObject("playtime", -1)).limit(10);
-        for (PlayerDataCollection data : sort) {
+        FindIterable<PlayerData> sort = players.find().sort(new BasicDBObject("playtime", -1)).limit(10);
+        for (PlayerData data : sort) {
             int playtime = data.playtime;
             list.append(data.rawName).append("[white]: ").append(Bundle.formatDuration(Duration.ofMinutes(playtime))).append("\n");
         }
