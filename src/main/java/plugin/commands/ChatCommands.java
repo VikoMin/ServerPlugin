@@ -225,7 +225,7 @@ public class ChatCommands {
         }
         player.sendMessage(list.toString());
     }
-    @ChatCommand(name = "help", description = "List all commands", args = "[int page]")
+    @ChatCommand(name = "help", description = "List all commands", args = "[int page]", maxArgsCount = 1)
     public void help(Player player, ArrayList<String> args) {
         int page = 1;
         if (!args.isEmpty() && Strings.canParseInt(args.get(0))) page = Integer.parseInt(args.get(0));
@@ -245,7 +245,7 @@ public class ChatCommands {
         }
         player.sendMessage(result.toString());
     }
-    @ChatCommand(name = "t", description = "Send a message only to your teammates.", args = "<str message...>", isLastArgText = true)
+    @ChatCommand(name = "t", description = "Send a message only to your teammates.", args = "<str message...>", minArgsCount = 1, isLastArgText = true)
     public void t(Player player, ArrayList<String> args) {
         String message = Vars.netServer.admins.filterMessage(player, Strings.join(" ", args));
         if(message != null){
@@ -253,7 +253,7 @@ public class ChatCommands {
             Groups.player.each(p -> p.team() == player.team(), o -> o.sendMessage(raw, player, message));
         }
     }
-    @ChatCommand(name = "a", description = "Send a message only to admins.", args = "<str message...>", isLastArgText = true, requiredRank = Ranks.Rank.Moderator)
+    @ChatCommand(name = "a", description = "Send a message only to admins.", args = "<str message...>", minArgsCount = 1, isLastArgText = true, requiredRank = Ranks.Rank.Moderator)
     public void a(Player player, ArrayList<String> args) {
         String raw = "[#" + Pal.adminChat.toString() + "]<A> " + Vars.netServer.chatFormatter.format(player, Strings.join(" ", args));
         Groups.player.each(Player::admin, a -> a.sendMessage(raw, player, Strings.join(" ", args)));
@@ -272,7 +272,7 @@ public class ChatCommands {
             netServer.sendWorldData(player);
         }
     }
-    @ChatCommand(name = "votekick", description = "Vote to kick a player with a valid reason.", args = "[player] [reason...]")
+    @ChatCommand(name = "votekick", description = "Vote to kick a player with a valid reason.", args = "[player] [reason...]", maxArgsCount = 2, isLastArgText = true)
     public void votekick(Player player, ArrayList<String> args) {
         var session = VoteSession.getInstance();
         if (!Administration.Config.enableVotekick.bool()) {
@@ -330,7 +330,7 @@ public class ChatCommands {
 
         }
     }
-    @ChatCommand(name = "vote", description = "Vote to kick the current player. Admin can cancel the voting with 'c'.", args = "<y/n/c>")
+    @ChatCommand(name = "vote", description = "Vote to kick the current player. Admin can cancel the voting with 'c'.", args = "<y/n/c>", minArgsCount = 1)
     public void vote(Player player, ArrayList<String> args) {
         VoteSession session = VoteSession.getInstance();
         if (session == null || !session.isAlive) {
