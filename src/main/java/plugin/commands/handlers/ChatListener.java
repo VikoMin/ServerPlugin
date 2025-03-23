@@ -1,5 +1,6 @@
 package plugin.commands.handlers;
 
+import arc.struct.Seq;
 import arc.util.Log;
 import mindustry.gen.Player;
 import plugin.commands.ChatCommands;
@@ -15,7 +16,7 @@ public class ChatListener {
 
 
     private static final ChatCommands LISTENER = new ChatCommands();
-
+    public static final Seq<ChatCommand> commands = new Seq<>();
     static {
 
         for (Method m : LISTENER.getClass().getDeclaredMethods()) {
@@ -23,7 +24,7 @@ public class ChatListener {
             if (m.isAnnotationPresent(ChatCommand.class)) {
 
                 ChatCommand command = m.getAnnotation(ChatCommand.class);
-
+                commands.add(command);
 
                 COMMANDS.put(command.name(), m);
 

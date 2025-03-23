@@ -4,6 +4,7 @@ import arc.ApplicationListener;
 import arc.Events;
 import arc.util.CommandHandler;
 import arc.util.Log;
+import arc.util.Time;
 import com.mongodb.ConnectionString;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -21,6 +22,7 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
+import plugin.commands.VoteSession;
 import plugin.commands.handlers.ChatListener;
 import plugin.discord.Bot;
 import plugin.etc.AntiVpn;
@@ -160,6 +162,11 @@ public class Plugin extends mindustry.mod.Plugin implements ApplicationListener 
             plugin.models.wrappers.PlayerData data = new plugin.models.wrappers.PlayerData(player);
             Call.sendMessage(player.name() + "[white] left " + "[grey][" + data.getId() + "]");
             Log.info(player.plainName() + " left " + "[" + data.getId() + "]");
+            VoteSession session = VoteSession.getInstance();
+            if (session != null && session.target.uuid().equals(event.player.uuid())) {
+                session.pass();
+                data.setLastBanTime(Time.millis() + (6 * 3600000)); // 6hour ban
+            }
         });
     }
 
