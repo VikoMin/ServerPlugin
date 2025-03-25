@@ -17,7 +17,7 @@ public class    Embed {
             .setTitle("Ban event")
             .setColor(Color.RED)
             .addField("**ID**", String.valueOf(data.getId()))
-            .addField("**Name**", data.getNames().get(-1))
+            .addField("**Name**", data.getNames().get(data.getNames().size() - 1))
             .addField("**UUID**", data.getUuid())
             .addField("**IP**", data.getIPs().toString())
             .addField("**Reason**", reason)
