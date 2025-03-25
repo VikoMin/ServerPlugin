@@ -160,7 +160,7 @@ public class ChatCommands {
     }
 
     @ChatCommand(name = "history", description = "Enables/Disables history mode")
-    public void history(Player player, ArrayList<String> args) {
+    public void history(Player player, List<String> args) {
         if (historyPlayers.contains(player.uuid())) {
             historyPlayers.remove(player.uuid());
             player.sendMessage("[red]History has been disabled!");
@@ -172,7 +172,7 @@ public class ChatCommands {
     }
 
     @ChatCommand(name = "joinmessage", args = "<str message>", description = "Makes custom join message! @ -> your name. Make sure this message wont break any rule!", minArgsCount = 1)
-    public void joinMessage(Player player, ArrayList<String> args) {
+    public void joinMessage(Player player, List<String> args) {
         plugin.models.wrappers.PlayerData data = new plugin.models.wrappers.PlayerData(player);
         if (args.get(0).length() >= 45) {
             player.sendMessage("Too much symbols! Limit is 45");
@@ -183,7 +183,7 @@ public class ChatCommands {
     }
 
     @ChatCommand(name = "leaderboard", description = "Shows leaderboard")
-    public void leaderboard(Player player, ArrayList<String> args) {
+    public void leaderboard(Player player, List<String> args) {
         StringBuilder list = new StringBuilder();
         list.append("[orange]Playtime leaderboard: \n");
         FindIterable<PlayerData> sort = players.find().sort(new BasicDBObject("playtime", -1)).limit(10);
@@ -195,12 +195,12 @@ public class ChatCommands {
     }
 
     @ChatCommand(name = "achievements", description = "Views your achievements")
-    public void achievements(Player player, ArrayList<String> args){
+    public void achievements(Player player, List<String> args){
         achMenu(player);
     }
 
     @ChatCommand(name = "serverhop", args = "<str server_name>", description = "Hops to server", minArgsCount = 1)
-    public void serverHop(Player player, ArrayList<String> args){
+    public void serverHop(Player player, List<String> args){
         JSONArray array = (JSONArray) servers.get("servers");
         Seq<Server> servers = new Seq<>();
         for (Object object : array) {
@@ -215,7 +215,7 @@ public class ChatCommands {
     }
 
     @ChatCommand(name = "servers", description = "Lists all servers")
-    public void servers(Player player, ArrayList<String> args){
+    public void servers(Player player, List<String> args){
         JSONArray array = (JSONArray) servers.get("servers");
         StringBuilder list = new StringBuilder();
         list.append("[yellow]SERVER LIST:\n\n[white]");
@@ -226,7 +226,7 @@ public class ChatCommands {
         player.sendMessage(list.toString());
     }
     @ChatCommand(name = "help", description = "List all commands", args = "[int page]", maxArgsCount = 1)
-    public void help(Player player, ArrayList<String> args) {
+    public void help(Player player, List<String> args) {
         int page = 1;
         if (!args.isEmpty() && Strings.canParseInt(args.get(0))) page = Integer.parseInt(args.get(0));
         int commandsPerPage = 6;
@@ -246,7 +246,7 @@ public class ChatCommands {
         player.sendMessage(result.toString());
     }
     @ChatCommand(name = "t", description = "Send a message only to your teammates.", args = "<str message...>", minArgsCount = 1, isLastArgText = true)
-    public void t(Player player, ArrayList<String> args) {
+    public void t(Player player, List<String> args) {
         String message = Vars.netServer.admins.filterMessage(player, Strings.join(" ", args));
         if(message != null){
             String raw = "[#" + player.team().color.toString() + "]<T> " + Vars.netServer.chatFormatter.format(player, message);
@@ -254,12 +254,12 @@ public class ChatCommands {
         }
     }
     @ChatCommand(name = "a", description = "Send a message only to admins.", args = "<str message...>", minArgsCount = 1, isLastArgText = true, requiredRank = Ranks.Rank.Moderator)
-    public void a(Player player, ArrayList<String> args) {
+    public void a(Player player, List<String> args) {
         String raw = "[#" + Pal.adminChat.toString() + "]<A> " + Vars.netServer.chatFormatter.format(player, Strings.join(" ", args));
         Groups.player.each(Player::admin, a -> a.sendMessage(raw, player, Strings.join(" ", args)));
     }
     @ChatCommand(name = "sync", description = "Re-synchronize world state.")
-    public void sync(Player player, ArrayList<String> args) {
+    public void sync(Player player, List<String> args) {
         if(player.isLocal()){
             player.sendMessage("[scarlet]Re-synchronizing as the host is pointless.");
         } else {
@@ -273,7 +273,7 @@ public class ChatCommands {
         }
     }
     @ChatCommand(name = "votekick", description = "Vote to kick a player with a valid reason.", args = "[player] [reason...]", maxArgsCount = 2, isLastArgText = true)
-    public void votekick(Player player, ArrayList<String> args) {
+    public void votekick(Player player, List<String> args) {
         var session = VoteSession.getInstance();
         if (!Administration.Config.enableVotekick.bool()) {
             player.sendMessage("[scarlet]Vote-kick is disabled on this server.");
@@ -331,7 +331,7 @@ public class ChatCommands {
         }
     }
     @ChatCommand(name = "vote", description = "Vote to kick the current player. Admin can cancel the voting with 'c'.", args = "<y/n/c>", minArgsCount = 1)
-    public void vote(Player player, ArrayList<String> args) {
+    public void vote(Player player, List<String> args) {
         VoteSession session = VoteSession.getInstance();
         if (session == null || !session.isAlive) {
             player.sendMessage("[scarlet]Nobody is being voted on.");
