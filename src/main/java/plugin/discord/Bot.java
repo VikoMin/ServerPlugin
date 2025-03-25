@@ -94,7 +94,7 @@ public class Bot {
             return;
         }*/
         if (listener.getChannel() == channel && listener.getMessageAuthor().isRegularUser()) {
-            Call.sendMessage("[blue][" + listener.getMessageAuthor().getName() + "[blue]]: [white]" + listener.getMessageContent());
+            Call.sendMessage("[blue][white] > " + listener.getMessageAuthor().getName() + "[white]: " + listener.getMessageContent());
         }
         if (listener.getMessageAuthor().isBotUser()) {
             return;
