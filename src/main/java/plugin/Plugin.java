@@ -163,7 +163,7 @@ public class Plugin extends mindustry.mod.Plugin implements ApplicationListener 
             Call.sendMessage(player.name() + "[white] left " + "[grey][" + data.getId() + "]");
             Log.info(player.plainName() + " left " + "[" + data.getId() + "]");
             VoteSession session = VoteSession.getInstance();
-            if (session != null && session.target.uuid().equals(event.player.uuid())) {
+            if ((session != null && session.isAlive) && session.target.uuid().equals(event.player.uuid())) {
                 session.pass();
                 data.setLastBanTime(Time.millis() + (6 * 3600000)); // 6hour ban
             }
