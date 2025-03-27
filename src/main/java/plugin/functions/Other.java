@@ -1,12 +1,12 @@
 package plugin.functions;
 
-import arc.util.Log;
+import arc.util.Strings;
 import arc.util.Timer;
+import mindustry.Vars;
 import mindustry.gen.Call;
 import mindustry.gen.Groups;
 import mindustry.gen.Player;
 import mindustry.net.NetConnection;
-import mindustry.server.ServerControl;
 import plugin.models.wrappers.PlayerData;
 import plugin.utils.MenuHandler;
 import useful.Bundle;
@@ -85,13 +85,7 @@ public class Other {
     }
 
     public static String readValueFromArraySeparated(String[] array, int startPoint, int endPoint) {
-        String[] newArray = Arrays.copyOfRange(array, startPoint, endPoint);
-        StringBuilder ha = new StringBuilder();
-        for (String element : newArray) {
-            ha.append(element).append(" ");
-        }
-        String a = String.valueOf(ha);
-        return a.substring(0, a.length() - 1);
+        return Strings.join(" ", Arrays.copyOfRange(array, startPoint, endPoint));
     }
 
     public static <T> boolean notInBounds(T[] array, int index) {
@@ -99,7 +93,6 @@ public class Other {
     }
 
     public static void reloadMaps() {
-        ServerControl.instance.handleCommandString("reloadmaps");
-        Log.info("Maps has been reloaded!");
+        Vars.maps.reload();
     }
 }

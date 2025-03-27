@@ -1,6 +1,7 @@
 package plugin.discord;
 
 import mindustry.Vars;
+import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -50,5 +51,15 @@ public class DiscordFunctions {
         writer.close();
         listener.getChannel().sendMessage(readFile);
         listener.getChannel().sendMessage("done");
+    }
+    public static void createAndSendTempFile(Message msg, List<String> list) throws IOException {
+        File readFile = new File(Vars.tmpDirectory.absolutePath() + "/readfile.txt");
+        readFile.createNewFile();
+        FileWriter writer = new FileWriter(readFile);
+        for (String line : list){
+            writer.write(line + "\n");
+        }
+        writer.close();
+        msg.getChannel().sendMessage(readFile);
     }
 }

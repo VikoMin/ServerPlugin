@@ -2,6 +2,7 @@ package plugin.utils;
 
 import mindustry.gen.Call;
 import mindustry.ui.Menus;
+import org.javacord.api.entity.message.Message;
 import org.javacord.api.event.message.MessageCreateEvent;
 import plugin.etc.Ranks;
 import plugin.models.wrappers.PlayerData;
@@ -38,6 +39,24 @@ public class MenuHandler {
                     data.setDiscordId(discordId);
                     player.sendMessage("[blue]Successfully connected your discord: " + listener.getMessageAuthor().getName());
                     listener.getChannel().sendMessage("Successfully connected your mindustry account!");
+                }
+            }
+        }));
+    }
+
+    public static void loginMenuFunction(Message message) {
+        loginMenu = Menus.registerMenu(((player, option) -> {
+            switch (option) {
+                case -1, 1 -> {
+                }
+                case 0 -> {
+                    long discordId = message.getAuthor().getId();
+                    PlayerData data = new PlayerData(player);
+                    if (data.getRank() == Ranks.Rank.Player)
+                        data.setRank(Ranks.Rank.Verified);
+                    data.setDiscordId(discordId);
+                    player.sendMessage("[blue]Successfully connected your discord: " + message.getAuthor().getName());
+                    message.getChannel().sendMessage("Successfully connected your mindustry account!");
                 }
             }
         }));

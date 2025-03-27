@@ -12,11 +12,13 @@ import mindustry.gen.Call;
 import mindustry.gen.Groups;
 import mindustry.gen.Player;
 import mindustry.maps.Map;
+import org.javacord.api.entity.permission.Role;
 import rhino.Context;
 import rhino.NativeJavaObject;
 import rhino.Scriptable;
 import rhino.Undefined;
 import java.util.ArrayList;
+import java.util.Set;
 
 import static plugin.commands.ChatCommands.votedPlayer;
 import static plugin.commands.ChatCommands.votes;
@@ -68,6 +70,12 @@ public class Utilities {
             Context.exit();
             result.get(out != null ? out.toString(): "null");
         });
+    }
+    public static boolean haveRole(java.util.List<org.javacord.api.entity.permission.Role> roles, Set<Long> required) {
+        for (Role r: roles) {
+            if (required.contains(r.getId())) return true;
+        }
+        return false;
     }
 }
 
