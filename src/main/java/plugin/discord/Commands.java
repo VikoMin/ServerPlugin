@@ -186,7 +186,7 @@ public class Commands {
                 .desc("Set player rank")
                 .args("<id> <rank>")
                 .requiredArgs(1)
-                .addRole(ConfigJson.moderatorId)
+                .addRole(ConfigJson.adminId)
                 .build((message, string) -> {
                     String[] args = string.split(" ");
                     if (!Strings.canParseInt(args[0])) {
