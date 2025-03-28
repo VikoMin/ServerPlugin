@@ -4,14 +4,12 @@ import arc.Events;
 import arc.math.Mathf;
 import arc.struct.ObjectMap;
 import arc.struct.Seq;
-import arc.util.CommandHandler;
 import arc.util.Strings;
 import arc.util.Time;
 import arc.util.Timekeeper;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.FindIterable;
 import mindustry.Vars;
-import mindustry.core.NetServer;
 import mindustry.game.EventType;
 import mindustry.game.Team;
 import mindustry.gen.Call;
@@ -104,7 +102,7 @@ public class ChatCommands {
         player.sendMessage(String.valueOf(list));
     }
 
-    @ChatCommand(name = "rtv", args = "[str map_name]", description = "Rock the vote to change map!", maxArgsCount = 1)
+    @ChatCommand(name = "rtv", args = "[str map_name]", description = "Rock the vote to change map!", maxArgsCount = 1, isLastArgText = true)
     public void rtv(Player player, List<String> args) {
         final int[] votesRequired = new int[1];
         AtomicInteger time = new AtomicInteger(60);
@@ -114,7 +112,7 @@ public class ChatCommands {
             player.sendMessage("Vote is already running!");
             return;
         }
-        Map choosedMap = Vars.maps.customMaps().find(map -> Strings.stripColors(map.name()).contains(args.get(0)));
+        Map choosedMap = Vars.maps.customMaps().find(map -> Strings.stripColors(map.name().toLowerCase()).contains(args.get(0).toLowerCase()));
         if (choosedMap == null) {
             player.sendMessage("Could not find that map!");
             return;

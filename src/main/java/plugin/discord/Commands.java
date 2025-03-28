@@ -3,7 +3,6 @@ package plugin.discord;
 import arc.Events;
 import arc.util.Http;
 import arc.util.Log;
-import arc.util.Strings;
 import arc.util.Timer;
 import mindustry.Vars;
 import mindustry.game.EventType;
@@ -32,7 +31,6 @@ import static arc.util.Strings.stripColors;
 import static mindustry.Vars.netServer;
 import static plugin.ConfigJson.discordUrl;
 import static plugin.discord.Bot.api;
-import static plugin.discord.DiscordFunctions.*;
 import static plugin.discord.Embed.banEmbed;
 import static plugin.etc.Ranks.getRank;
 import static plugin.functions.Other.*;
@@ -58,15 +56,17 @@ public class Commands {
         DiscordCommandRegister.create("ranks")
                 .desc("See all available ranks")
                 .build((message, string) -> {
-                    String response = "```" + "PlayerData -> Basic rank that given to all players on our server\n" + "Verified -> In order to get it you should connect your mindustry account to discord using /login\n" + "Administrator -> Administrator of our servers.\n" + "Console -> People that have access to game console and javascript execution\n" + "Owner -> Rank of owner, has access to everything" + "```";
-                    message.getChannel().sendMessage(response);
+                    EmbedBuilder embed = new EmbedBuilder().setTitle("Ranks").setColor(Color.decode("#00BFFF"));
+                    for (Ranks.Rank rank: Ranks.Rank.values())
+                        embed.addField(rank.getName(), rank.getDescription());
+                    message.getChannel().sendMessage(embed);
                 });
         DiscordCommandRegister.create("stats")
                 .desc("See player stats")
                 .args("<id>")
                 .requiredArgs(1)
                 .build((message, string) -> {
-                    if (!Strings.canParseInt(string)) {
+                    if (!canParseInt(string)) {
                         message.getChannel().sendMessage("'id' must be number!");
                         return;
                     }
@@ -80,7 +80,7 @@ public class Commands {
                                 .setColor(Color.RED)
                                 .addField("Name", stripColors(data.getNames().toString()))
                                 .addField("ID", String.valueOf(data.getId()))
-                                .addField("Rank", data.getRank().getName())
+                                .addField("Rank", data.getRank().getColoredName())
                                 .addField("Achievements", data.getAchievements().toString())
                                 .addField("Playtime", Bundle.formatDuration(Duration.ofMinutes(playtime)));
                         if (data.getDiscordId() != 0) {
@@ -158,7 +158,7 @@ public class Commands {
                 .requiredArgs(1)
                 .addRole(ConfigJson.moderatorId)
                 .build((message, string) -> {
-                    if (!Strings.canParseInt(string)) {
+                    if (!canParseInt(string)) {
                         message.getChannel().sendMessage("'id' must be number!");
                         return;
                     }
@@ -179,7 +179,7 @@ public class Commands {
                         return;
                     }
                     if (player.admin()) {
-                        message.getChannel().sendMessage("PlayerData is already admin!");
+                        message.getChannel().sendMessage("Player is already admin!");
                         return;
                     }
                     netServer.admins.adminPlayer(player.uuid(), player.usid());
@@ -193,7 +193,7 @@ public class Commands {
                 .addRole(ConfigJson.adminId)
                 .build((message, string) -> {
                     String[] args = string.split(" ");
-                    if (!Strings.canParseInt(args[0])) {
+                    if (!canParseInt(args[0])) {
                         message.getChannel().sendMessage("'id' must be number!");
                         return;
                     }
@@ -220,7 +220,7 @@ public class Commands {
                 .args("<id>")
                 .requiredArgs(1)
                 .build((message, string) -> {
-                    if (!Strings.canParseInt(string)) {
+                    if (!canParseInt(string)) {
                         message.getChannel().sendMessage("'id' must be number!");
                         return;
                     }
@@ -256,7 +256,7 @@ public class Commands {
                 .addRole(ConfigJson.moderatorId)
                 .desc("Unban player")
                 .build((message, string) -> {
-                    if (!Strings.canParseInt(string)) {
+                    if (!canParseInt(string)) {
                         message.getChannel().sendMessage("'id' must be number!");
                         return;
                     }
@@ -297,7 +297,7 @@ public class Commands {
                 .requiredArgs(2)
                 .build((message, string) -> {
                     String[] args = string.split(" ");
-                    if (!Strings.canParseInt(args[0])) {
+                    if (!canParseInt(args[0])) {
                         message.getChannel().sendMessage("'id' must be number!");
                         return;
                     }
@@ -379,7 +379,14 @@ public class Commands {
                     long count = list.size();
                     List<String> newList = list.stream().skip(count - amount).toList();
                     try {
-                        createAndSendTempFile(message, newList);
+                        File readFile = new File(Vars.tmpDirectory.absolutePath() + "/readfile.txt");
+                        readFile.createNewFile();
+                        FileWriter writer = new FileWriter(readFile);
+                        for (String line : newList){
+                            writer.write(line + "\n");
+                        }
+                        writer.close();
+                        message.getChannel().sendMessage(readFile);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     };

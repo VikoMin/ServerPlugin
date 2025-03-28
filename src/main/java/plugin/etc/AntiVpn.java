@@ -1,6 +1,5 @@
 package plugin.etc;
 
-import arc.struct.Seq;
 import arc.util.Http;
 import arc.util.Log;
 import arc.util.serialization.Jval;
@@ -9,9 +8,10 @@ import plugin.Plugin;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
+import java.util.ArrayList;
 
 public class AntiVpn {
-    public static final Seq<Subnet> subnets = new Seq<>();
+    public static final ArrayList<Subnet> subnets = new ArrayList<>();
 
     public static void loadAntiVPN() {
                 Http.get("https://raw.githubusercontent.com/X4BNet/lists_vpn/main/output/datacenter/ipv4.txt", response -> {
@@ -19,7 +19,7 @@ public class AntiVpn {
 
                     for (var address : result) subnets.add(parseSubnet(address));
 
-                    Log.info("Fetched @ datacenter subnets.", subnets.size);
+                    Log.info("Fetched @ datacenter subnets.", subnets.size());
                 }, error -> Log.err("Failed to fetch datacenter subnets.", error));
                 Http.get("https://www.gstatic.com/ipranges/goog.json", response -> {
                     Jval googleJson = Jval.read(new InputStreamReader(response.getResultAsStream()));
@@ -47,7 +47,7 @@ public class AntiVpn {
                 }
             }
         }
-        Log.info("bro " + subnets.size + " ips is crazy!");
+        Log.info("bro " + subnets.size() + " ips is crazy!");
     }
 
     /**

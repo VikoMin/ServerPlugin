@@ -1,6 +1,5 @@
 package plugin.functions;
 
-import arc.util.Strings;
 import arc.util.Timer;
 import mindustry.Vars;
 import mindustry.gen.Call;
@@ -12,7 +11,6 @@ import plugin.utils.MenuHandler;
 import useful.Bundle;
 
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.Date;
 
 import static plugin.ConfigJson.discordUrl;
@@ -82,14 +80,6 @@ public class Other {
                 + "\n\n[orange]Playtime: [white]" + Bundle.formatDuration(Duration.ofMinutes(playtime));
         String button = "[red]Close";
         Call.menu(player.con, MenuHandler.statsMenu, title, description, new String[][]{{button}});
-    }
-
-    public static String readValueFromArraySeparated(String[] array, int startPoint, int endPoint) {
-        return Strings.join(" ", Arrays.copyOfRange(array, startPoint, endPoint));
-    }
-
-    public static <T> boolean notInBounds(T[] array, int index) {
-        return (index < 0) || (index >= array.length);
     }
 
     public static void reloadMaps() {
