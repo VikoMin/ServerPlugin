@@ -77,5 +77,19 @@ public class Utilities {
         }
         return false;
     }
+    public static <T> Seq<Seq<T>> splitBy(Seq<T> arr, int cap) {
+        Seq<Seq<T>> res = new Seq<>();
+        int start = 0;
+        for (int i = 0; i < (arr.size + cap - 1) / cap; i++) {
+            int end = Math.min(start + cap, arr.size);
+            var s = new Seq<T>();
+            for (int j = start; j < end; j++) {
+                s.add(arr.get(j));
+            }
+            res.add(s);
+            start = end;
+        }
+        return res;
+    }
 }
 

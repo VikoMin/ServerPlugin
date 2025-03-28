@@ -45,11 +45,15 @@ public class Commands {
         DiscordCommandRegister.create("help")
                 .desc("See all available commands")
                 .build((message, string) -> {
-                    StringBuilder sb = new StringBuilder();
-                    DiscordCommandRegister.commands.each(c -> !c.hidden, c -> {
-                        sb.append("**").append(c.name).append("** ").append(c.args).append("\n-# ").append(c.desc).append("\n");
+                    var paged = new PagedEmbed();
+                    Utilities.splitBy(DiscordCommandRegister.commands.select(c ->!c.hidden), 5).each(s -> {
+                       var page = new PagedEmbed.EmbedPage("Available commands", Color.magenta);
+                       s.each(command -> {
+                           page.addField(command.desc, command.name + " " + command.args);
+                       });
+                       paged.addPage(page);
                     });
-                    message.getChannel().sendMessage(sb.toString());
+                    paged.send(message.getChannel());
                 });
         DiscordCommandRegister.create("ranks")
                 .desc("See all available ranks")
