@@ -13,11 +13,11 @@ import mindustry.gen.Player;
 import mindustry.maps.Map;
 import mindustry.server.ServerControl;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
-import plugin.ConfigJson;
+import plugin.configs.ConfigJson;
 import plugin.discord.commands.DiscordCommandRegister;
-import plugin.etc.Ranks;
-import plugin.models.wrappers.PlayerData;
-import plugin.utils.Utilities;
+import plugin.models.Ranks;
+import plugin.database.wrappers.PlayerData;
+import plugin.Utilities;
 import useful.Bundle;
 import java.awt.*;
 import java.io.*;
@@ -29,14 +29,14 @@ import java.util.concurrent.TimeUnit;
 import static arc.util.Strings.canParseInt;
 import static arc.util.Strings.stripColors;
 import static mindustry.Vars.netServer;
-import static plugin.ConfigJson.discordUrl;
+import static plugin.configs.ConfigJson.discordUrl;
 import static plugin.discord.Bot.api;
 import static plugin.discord.Embed.banEmbed;
-import static plugin.etc.Ranks.getRank;
-import static plugin.functions.Other.*;
-import static plugin.utils.MenuHandler.loginMenu;
-import static plugin.utils.MenuHandler.loginMenuFunction;
-import static plugin.utils.Utilities.findPlayerByName;
+import static plugin.models.Ranks.getRank;
+import static plugin.funcs.Other.*;
+import static plugin.menus.MenuHandler.loginMenu;
+import static plugin.menus.MenuHandler.loginMenuFunction;
+import static plugin.Utilities.findPlayerByName;
 
 public class Commands {
     public static void load() {
@@ -81,7 +81,6 @@ public class Commands {
                                 .addField("Name", stripColors(data.getNames().toString()))
                                 .addField("ID", String.valueOf(data.getId()))
                                 .addField("Rank", data.getRank().getColoredName())
-                                .addField("Achievements", data.getAchievements().toString())
                                 .addField("Playtime", Bundle.formatDuration(Duration.ofMinutes(playtime)));
                         if (data.getDiscordId() != 0) {
                             embed.addField("Discord", "<@" + data.getDiscordId() + ">");
@@ -290,25 +289,6 @@ public class Commands {
                         System.exit(0);
                     }, 1f);
                 });
-        DiscordCommandRegister.create("giveach")
-                .desc("Give achievement")
-                .addRole(ConfigJson.adminId)
-                .args("<id> <text...>")
-                .requiredArgs(2)
-                .build((message, string) -> {
-                    String[] args = string.split(" ");
-                    if (!canParseInt(args[0])) {
-                        message.getChannel().sendMessage("'id' must be number!");
-                        return;
-                    }
-                    PlayerData data = new PlayerData(Integer.parseInt(args[0]));
-                    if (!data.isExist()) {
-                        message.getChannel().sendMessage("no data found!");
-                    } else {
-                        data.addAchievement(string.substring(args[0].length() + 1));
-                        message.getChannel().sendMessage("added.");
-                    }
-                });
         DiscordCommandRegister.create("addmap")
                 .desc("Upload map")
                 .addRole(ConfigJson.adminId)
@@ -420,24 +400,6 @@ public class Commands {
                             "\nCOMMAND LINE: " + handle.info().commandLine().get() +
                             "\nSTARTINSTANT: " + handle.info().startInstant().get() + "\nOWNER: " +
                             handle.info().user().get() + "\n```");
-                });
-        DiscordCommandRegister.create("removeach")
-                .desc("remove achievement")
-                .args("<id> <ach...>")
-                .addRole(ConfigJson.adminId)
-                .build((message, string) -> {
-                    String[] args = string.split(" ");
-                    if (!canParseInt(args[0])) {
-                        message.getChannel().sendMessage("'id' must be number!");
-                        return;
-                    }
-                    PlayerData data = new PlayerData(Integer.parseInt(args[0]));
-                    if (!data.isExist()) {
-                        message.getChannel().sendMessage("No data found!");
-                    } else {
-                        data.removeAchievement(string.substring(args[0].length() + 1));
-                        message.getChannel().sendMessage("removed.");
-                    }
                 });
     }
 }

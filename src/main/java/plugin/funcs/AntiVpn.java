@@ -1,4 +1,4 @@
-package plugin.etc;
+package plugin.funcs;
 
 import arc.util.Http;
 import arc.util.Log;

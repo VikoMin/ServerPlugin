@@ -5,8 +5,8 @@ import arc.struct.Seq;
 import arc.util.Log;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.user.User;
-import plugin.ConfigJson;
-import plugin.utils.Utilities;
+import plugin.configs.ConfigJson;
+import plugin.Utilities;
 
 
 public class DiscordCommandRegister {

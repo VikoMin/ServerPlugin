@@ -1,13 +1,13 @@
-package plugin.utils;
+package plugin.menus;
 
 import mindustry.gen.Call;
 import mindustry.ui.Menus;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.event.message.MessageCreateEvent;
-import plugin.etc.Ranks;
-import plugin.models.wrappers.PlayerData;
+import plugin.models.Ranks;
+import plugin.database.wrappers.PlayerData;
 
-import static plugin.ConfigJson.discordUrl;
+import static plugin.configs.ConfigJson.discordUrl;
 
 
 public class MenuHandler {

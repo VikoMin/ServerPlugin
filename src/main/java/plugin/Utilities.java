@@ -1,4 +1,4 @@
-package plugin.utils;
+package plugin;
 import arc.Events;
 import arc.func.Cons;
 import arc.func.Func;

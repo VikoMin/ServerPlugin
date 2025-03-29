@@ -1,4 +1,4 @@
-package plugin;
+package plugin.configs;
 
 import arc.util.Log;
 import mindustry.Vars;

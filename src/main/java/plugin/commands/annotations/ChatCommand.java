@@ -1,6 +1,6 @@
 package plugin.commands.annotations;
 
-import plugin.etc.Ranks;
+import plugin.models.Ranks;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

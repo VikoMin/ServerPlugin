@@ -1,4 +1,4 @@
-package plugin.models.wrappers;
+package plugin.database.wrappers;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCursor;
@@ -6,7 +6,7 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
 import mindustry.gen.Player;
 import mindustry.net.NetConnection;
-import plugin.etc.Ranks;
+import plugin.models.Ranks;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -16,12 +16,12 @@ import static com.mongodb.client.model.Filters.eq;
 import static plugin.Plugin.players;
 
 public class PlayerData {
-    private final plugin.models.collections.PlayerData collection;
+    private final plugin.database.collections.PlayerData collection;
 
     public static ArrayList<PlayerData> findByName(String name) {
         ArrayList<PlayerData> output = new ArrayList<>();
         Pattern pattern = Pattern.compile(".?" + name + ".?", Pattern.CASE_INSENSITIVE);
-        try (MongoCursor<plugin.models.collections.PlayerData> cursor = players.find(Filters.regex("name", pattern)).limit(25).iterator()) {
+        try (MongoCursor<plugin.database.collections.PlayerData> cursor = players.find(Filters.regex("name", pattern)).limit(25).iterator()) {
             while (cursor.hasNext())
                 output.add(new PlayerData(cursor.next()));
         }
@@ -30,14 +30,14 @@ public class PlayerData {
 
     public static ArrayList<PlayerData> findByIp(String ip) {
         ArrayList<PlayerData> output = new ArrayList<>();
-        try (MongoCursor<plugin.models.collections.PlayerData> cursor = players.find(Filters.in("ips", ip)).limit(25).iterator()) {
+        try (MongoCursor<plugin.database.collections.PlayerData> cursor = players.find(Filters.in("ips", ip)).limit(25).iterator()) {
             while (cursor.hasNext())
                 output.add(new PlayerData(cursor.next()));
         }
         return output;
     }
 
-    public PlayerData(plugin.models.collections.PlayerData collection){
+    public PlayerData(plugin.database.collections.PlayerData collection){
         this.collection = collection;
     }
     public PlayerData(int id) {
@@ -52,7 +52,7 @@ public class PlayerData {
     }
     public PlayerData(Player player) {
         collection = Optional.ofNullable(players.find(eq("uuid", player.uuid())).first()).orElse(
-                new plugin.models.collections.PlayerData(getNextID(), player.uuid()));
+                new plugin.database.collections.PlayerData(getNextID(), player.uuid()));
         if (!collection.names.contains(player.plainName())) collection.names.add(player.plainName());
         collection.rawName = player.name();
         if (!collection.ips.contains(player.con.address)) collection.ips.add(player.con.address);
@@ -68,7 +68,7 @@ public class PlayerData {
     }
 
     public static int getNextID() {
-        plugin.models.collections.PlayerData data = players.find().sort(new BasicDBObject("_id", -1)).first();
+        plugin.database.collections.PlayerData data = players.find().sort(new BasicDBObject("_id", -1)).first();
         return (data == null) ? 0 : data.id + 1;
     }
 
@@ -101,14 +101,6 @@ public class PlayerData {
         commit();
     }
     //mutators
-    public void addAchievement(String ach){
-        collection.achievements.add(ach);
-        commit();
-    }
-    public void removeAchievement(String ach){
-        collection.achievements.remove(ach);
-        commit();
-    }
     public void playtimeIncrease() {
         collection.playtime++;
         commit();
@@ -167,12 +159,6 @@ public class PlayerData {
         if (isExist())
             return collection.discordId;
         return 0;
-    }
-
-    public ArrayList<String> getAchievements() {
-        if (isExist())
-            return collection.achievements;
-        return new ArrayList<>();
     }
 
     public int getPlaytime() {

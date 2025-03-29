@@ -6,12 +6,12 @@ import arc.util.Timer;
 
 import org.json.simple.parser.ParseException;
 import plugin.discord.Bot;
-import plugin.etc.Ranks;
-import plugin.models.wrappers.PlayerData;
+import plugin.models.Ranks;
+import plugin.database.wrappers.PlayerData;
 
 import java.io.IOException;
 
-import static plugin.ServersConfig.resetServersConfig;
+import static plugin.configs.ServersConfig.resetServersConfig;
 
 public class ConsoleCommands {
     public static void loadServerCommands(CommandHandler handler) {

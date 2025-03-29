@@ -1,4 +1,4 @@
-package plugin.etc;
+package plugin.models;
 
 import java.util.Arrays;
 

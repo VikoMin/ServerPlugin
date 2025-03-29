@@ -1,4 +1,4 @@
-package plugin.functions;
+package plugin.funcs;
 
 import arc.util.Timer;
 import mindustry.Vars;
@@ -6,14 +6,14 @@ import mindustry.gen.Call;
 import mindustry.gen.Groups;
 import mindustry.gen.Player;
 import mindustry.net.NetConnection;
-import plugin.models.wrappers.PlayerData;
-import plugin.utils.MenuHandler;
+import plugin.database.wrappers.PlayerData;
+import plugin.menus.MenuHandler;
 import useful.Bundle;
 
 import java.time.Duration;
 import java.util.Date;
 
-import static plugin.ConfigJson.discordUrl;
+import static plugin.configs.ConfigJson.discordUrl;
 
 public class Other {
     public static void PlaytimeTimer() {
@@ -76,7 +76,6 @@ public class Other {
         String description = "[orange]Name: " + reqPlayer.name()
                 + "\n[orange]ID: [white]" + data.getId()
                 + "\n[orange]Rank: " + rank
-                + "\n[orange]Achievements: [white]" + data.getAchievements().toString()
                 + "\n\n[orange]Playtime: [white]" + Bundle.formatDuration(Duration.ofMinutes(playtime));
         String button = "[red]Close";
         Call.menu(player.con, MenuHandler.statsMenu, title, description, new String[][]{{button}});

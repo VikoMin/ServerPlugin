@@ -1,4 +1,4 @@
-package plugin.models.collections;
+package plugin.database.collections;
 
 import java.util.ArrayList;
 public class PlayerData {
@@ -11,7 +11,6 @@ public class PlayerData {
     public ArrayList<String> ips = new ArrayList<>();
     public long lastBan = 0;
     public long discordId = 0;
-    public ArrayList<String> achievements = new ArrayList<>();
     public int playtime = 0;
     public boolean isVip = false;
     public PlayerData(){} //necessary for mongodb

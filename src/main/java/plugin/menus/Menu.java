@@ -1,4 +1,4 @@
-package plugin.etc;
+package plugin.menus;
 
 import mindustry.gen.Call;
 import mindustry.gen.Player;

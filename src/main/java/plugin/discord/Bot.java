@@ -10,9 +10,9 @@ import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.intent.Intent;
 import org.javacord.api.event.message.MessageCreateEvent;
-import plugin.ConfigJson;
+import plugin.configs.ConfigJson;
 import plugin.discord.commands.DiscordCommandRegister;
-import plugin.models.wrappers.PlayerData;
+import plugin.database.wrappers.PlayerData;
 
 
 @SuppressWarnings("unused")

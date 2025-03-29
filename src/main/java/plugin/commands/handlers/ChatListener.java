@@ -5,7 +5,7 @@ import arc.util.Log;
 import mindustry.gen.Player;
 import plugin.commands.ChatCommands;
 import plugin.commands.annotations.ChatCommand;
-import plugin.models.wrappers.PlayerData;
+import plugin.database.wrappers.PlayerData;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

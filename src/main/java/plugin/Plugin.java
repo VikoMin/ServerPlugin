@@ -24,9 +24,10 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import plugin.commands.VoteSession;
 import plugin.commands.handlers.ChatListener;
+import plugin.configs.ConfigJson;
 import plugin.discord.Bot;
-import plugin.etc.AntiVpn;
-import plugin.models.collections.PlayerData;
+import plugin.funcs.AntiVpn;
+import plugin.database.collections.PlayerData;
 import useful.Bundle;
 
 import java.io.File;
@@ -36,17 +37,17 @@ import static com.mongodb.MongoClientSettings.getDefaultCodecRegistry;
 import static mindustry.Vars.*;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
-import static plugin.ConfigJson.discordUrl;
-import static plugin.ServersConfig.makeServersConfig;
-import static plugin.commands.BanMenu.loadBanMenu;
+import static plugin.configs.ConfigJson.discordUrl;
+import static plugin.configs.ServersConfig.makeServersConfig;
+import static plugin.menus.BanMenu.loadBanMenu;
 import static plugin.commands.ConsoleCommands.loadServerCommands;
 import static plugin.commands.ChatCommands.*;
 import static plugin.commands.history.History.historyPlayers;
 import static plugin.commands.history.History.loadHistory;
-import static plugin.etc.AntiVpn.loadAntiVPN;
-import static plugin.functions.Other.PlaytimeTimer;
-import static plugin.functions.Other.kickIfBanned;
-import static plugin.functions.Other.welcomeMenu;
+import static plugin.funcs.AntiVpn.loadAntiVPN;
+import static plugin.funcs.Other.PlaytimeTimer;
+import static plugin.funcs.Other.kickIfBanned;
+import static plugin.funcs.Other.welcomeMenu;
 
 
 public class Plugin extends mindustry.mod.Plugin implements ApplicationListener {
@@ -88,7 +89,7 @@ public class Plugin extends mindustry.mod.Plugin implements ApplicationListener 
         Events.on(EventType.PlayerJoin.class, event -> {
             Player plr = event.player;
             if (!plr.admin) welcomeMenu(plr);
-            plugin.models.wrappers.PlayerData data = new plugin.models.wrappers.PlayerData(event.player);
+            plugin.database.wrappers.PlayerData data = new plugin.database.wrappers.PlayerData(event.player);
             kickIfBanned(event.player);
             String joinMessage = data.getJoinMessage().trim();
             Call.sendMessage(joinMessage.replace("@", plr.name()) + " [grey][" + data.getId() + "]");
@@ -159,7 +160,7 @@ public class Plugin extends mindustry.mod.Plugin implements ApplicationListener 
         Events.on(EventType.PlayerLeave.class, event -> {
             Player player = event.player;
             historyPlayers.remove(player.uuid());
-            plugin.models.wrappers.PlayerData data = new plugin.models.wrappers.PlayerData(player);
+            plugin.database.wrappers.PlayerData data = new plugin.database.wrappers.PlayerData(player);
             Call.sendMessage(player.name() + "[white] left " + "[grey][" + data.getId() + "]");
             Log.info(player.plainName() + " left " + "[" + data.getId() + "]");
             VoteSession session = VoteSession.getInstance();

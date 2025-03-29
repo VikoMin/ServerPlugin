@@ -22,8 +22,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import plugin.commands.annotations.ChatCommand;
 import plugin.commands.handlers.ChatListener;
-import plugin.etc.Ranks;
-import plugin.models.collections.PlayerData;
+import plugin.models.Ranks;
+import plugin.database.collections.PlayerData;
 import useful.Bundle;
 
 import java.time.Duration;
@@ -33,13 +33,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static arc.util.Strings.canParseInt;
 import static mindustry.Vars.netServer;
 import static mindustry.core.NetServer.voteCooldown;
-import static plugin.ConfigJson.discordUrl;
+import static plugin.configs.ConfigJson.discordUrl;
 import static plugin.Plugin.players;
 import static plugin.Plugin.servers;
-import static plugin.commands.Menus.achMenu;
 import static plugin.commands.history.History.historyPlayers;
-import static plugin.functions.Other.statsMenu;
-import static plugin.utils.Utilities.*;
+import static plugin.funcs.Other.statsMenu;
+import static plugin.Utilities.*;
 
 @SuppressWarnings("unused")
 public class ChatCommands {
@@ -62,7 +61,7 @@ public class ChatCommands {
     public void players(Player player, List<String> args) {
         StringBuilder list = new StringBuilder();
         for (Player plr : Groups.player) {
-            plugin.models.wrappers.PlayerData data = new plugin.models.wrappers.PlayerData(plr);
+            plugin.database.wrappers.PlayerData data = new plugin.database.wrappers.PlayerData(plr);
             if (data.isExist()) {
                 list.append(plr.name()).append("; [white]ID: ").append(data.getId()).append("\n");
             }
@@ -171,7 +170,7 @@ public class ChatCommands {
 
     @ChatCommand(name = "joinmessage", args = "<str message>", description = "Makes custom join message! @ -> your name. Make sure this message wont break any rule!", minArgsCount = 1)
     public void joinMessage(Player player, List<String> args) {
-        plugin.models.wrappers.PlayerData data = new plugin.models.wrappers.PlayerData(player);
+        plugin.database.wrappers.PlayerData data = new plugin.database.wrappers.PlayerData(player);
         if (args.get(0).length() >= 45) {
             player.sendMessage("Too much symbols! Limit is 45");
         } else {
@@ -192,11 +191,6 @@ public class ChatCommands {
         player.sendMessage(list.toString());
     }
 
-    @ChatCommand(name = "achievements", description = "Views your achievements")
-    public void achievements(Player player, List<String> args){
-        achMenu(player);
-    }
-
     @ChatCommand(name = "serverhop", args = "<str server_name>", description = "Hops to server", minArgsCount = 1)
     public void serverHop(Player player, List<String> args){
         JSONArray array = (JSONArray) servers.get("servers");
@@ -206,9 +200,9 @@ public class ChatCommands {
             Server serv = new Server((String) jsonObject.get("servername"), (String) jsonObject.get("ip"), (Long) jsonObject.get("port"));
             servers.add(serv);
         }
-        if (servers.contains(server -> server.name.contains(args.get(0)))) {
-            Server serv = servers.find(server -> server.name.contains(args.get(0)));
-            Call.connect(player.con, serv.ip, Math.toIntExact(serv.port));
+        if (servers.contains(server -> server.name().contains(args.get(0)))) {
+            Server serv = servers.find(server -> server.name().contains(args.get(0)));
+            Call.connect(player.con, serv.ip(), Math.toIntExact(serv.port()));
         }
     }
 

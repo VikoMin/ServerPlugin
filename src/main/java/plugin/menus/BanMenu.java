@@ -1,4 +1,4 @@
-package plugin.commands;
+package plugin.menus;
 
 import arc.Events;
 import arc.util.Log;
@@ -11,7 +11,7 @@ import mindustry.gen.Player;
 import mindustry.net.Administration.TraceInfo;
 import mindustry.net.Packets.KickReason;
 import plugin.discord.Bot;
-import plugin.models.wrappers.PlayerData;
+import plugin.database.wrappers.PlayerData;
 import useful.Action;
 import useful.Action2;
 import useful.Bundle;
@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 import static mindustry.Vars.logic;
 import static mindustry.Vars.net;
-import static plugin.ConfigJson.discordUrl;
+import static plugin.configs.ConfigJson.discordUrl;
 import static plugin.discord.Embed.banEmbed;
 
 public class BanMenu {
