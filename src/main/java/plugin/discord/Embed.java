@@ -1,7 +1,10 @@
 package plugin.discord;
 
+import mindustry.gen.Player;
+import org.javacord.api.entity.message.MessageAuthor;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.Role;
+import org.javacord.api.entity.user.User;
 import plugin.database.wrappers.PlayerData;
 import plugin.Utilities;
 import useful.Bundle;
@@ -10,27 +13,40 @@ import java.awt.*;
 import java.time.Duration;
 import java.util.Optional;
 
-public class    Embed {
+public class Embed {
 
-    public static EmbedBuilder banEmbed(PlayerData data, String reason, long banTime, String moderator){
+    public static EmbedBuilder banEmbed(Player player, Player moderator, String reason, long banTime) {
+        PlayerData data = new PlayerData(player);
         return new EmbedBuilder()
-            .setTitle("Ban event")
-            .setColor(Color.RED)
-            .addField("**ID**", String.valueOf(data.getId()))
-            .addField("**Name**", data.getNames().get(data.getNames().size() - 1))
-            .addField("**UUID**", data.getUuid())
-            .addField("**IP**", data.getIPs().toString())
-            .addField("**Reason**", reason)
-            .addField("**Expires**", "<t:" + banTime/1000 +":D>")
-            .addField("**Moderator**", moderator);
-            
-}
-    public static EmbedBuilder noRoleEmbed(Optional<Role> role){
-        return new EmbedBuilder()
-                .setTitle("Not enough permissions!")
+                .setTitle("Ban event")
                 .setColor(Color.RED)
-                .setDescription("You should have <@&" + role.get().getId() + "> Role to interact with this command/button!");
+                .addField("**ID**", String.valueOf(data.getId()))
+                .addField("**Name**", player.plainName())
+                .addField("**UUID**", player.uuid())
+                .addField("**IP**", data.getIPs().toString())
+                .addField("**Reason**", reason)
+                .addField("**Expires**", "<t:" + banTime / 1000 + ":D>")
+                .addField("**Moderator**", moderator.plainName())
+                .addField("**Moderator ID**", String.valueOf(new PlayerData(moderator).getId()));
     }
+
+    public static EmbedBuilder banEmbed(PlayerData player, MessageAuthor moderator, String reason, long banTime) {
+        EmbedBuilder embed = new EmbedBuilder()
+                .setTitle("Ban event")
+                .setColor(Color.RED)
+                .addField("**ID**", String.valueOf(player.getId()))
+                .addField("**Name**", player.getNames().get(player.getNames().size() - 1))
+                .addField("**UUID**", player.getUuid())
+                .addField("**IP**", player.getIPs().toString())
+                .addField("**Reason**", reason)
+                .addField("**Expires**", "<t:" + banTime / 1000 + ":D>")
+                .addField("**Moderator**", moderator.getName());
+
+        long id = PlayerData.getIdBySnowFlake(moderator.getId());
+        if (id != moderator.getId()) embed.addField("**Moderator ID**", String.valueOf(id));
+        return embed;
+    }
+
     public static EmbedBuilder infoEmbed(PlayerData data) {
         return new EmbedBuilder()
                 .setTitle("Player info")

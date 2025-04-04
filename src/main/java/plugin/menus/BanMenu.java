@@ -119,7 +119,7 @@ public class BanMenu {
                 target.con.kick("[red]You have been banned!\n\n" + "[white]Reason: " + text + "\nDuration: " + timeUntilUnban + " until unban\nIf you think this is a mistake, make sure to appeal ban in our discord: " + discordUrl, 0);
                 Call.sendMessage(target.plainName() + " has been banned for: " + text);
                 data.setLastBanTime(banTime);
-                Bot.banchannel.sendMessage(banEmbed(data, text, banTime, view.player.plainName()));
+                Bot.banchannel.sendMessage(banEmbed(target, view.player, text, banTime));
             });
         });
     }
