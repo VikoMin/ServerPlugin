@@ -85,7 +85,7 @@ public class Plugin extends mindustry.mod.Plugin implements ApplicationListener 
         loadHistory();
         Log.info("Plugin started!");
         Bundle.load(Plugin.class);
-        Events.on(EventType.PlayerConnect.class, e -> {
+        Events.on(EventType.PlayerConnect.class, event -> {
                   kickIfBanned(event.player);
         });
         Events.on(EventType.PlayerJoin.class, event -> {
