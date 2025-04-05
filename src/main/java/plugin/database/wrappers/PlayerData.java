@@ -4,13 +4,13 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
+import mindustry.gen.Groups;
 import mindustry.gen.Player;
 import mindustry.net.NetConnection;
 import plugin.models.Ranks;
 
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 import static com.mongodb.client.model.Filters.eq;
 import static plugin.Plugin.players;
@@ -18,19 +18,10 @@ import static plugin.Plugin.players;
 public class PlayerData {
     private final plugin.database.collections.PlayerData collection;
 
-    public static ArrayList<PlayerData> findByName(String name) {
+    public static ArrayList<PlayerData> findByRank(String rankName) {
         ArrayList<PlayerData> output = new ArrayList<>();
-        Pattern pattern = Pattern.compile(".?" + name + ".?", Pattern.CASE_INSENSITIVE);
-        try (MongoCursor<plugin.database.collections.PlayerData> cursor = players.find(Filters.regex("name", pattern)).limit(25).iterator()) {
-            while (cursor.hasNext())
-                output.add(new PlayerData(cursor.next()));
-        }
-        return output;
-    }
-
-    public static ArrayList<PlayerData> findByIp(String ip) {
-        ArrayList<PlayerData> output = new ArrayList<>();
-        try (MongoCursor<plugin.database.collections.PlayerData> cursor = players.find(Filters.in("ips", ip)).limit(25).iterator()) {
+        Ranks.Rank rank = Ranks.getRank(rankName);
+        try (MongoCursor<plugin.database.collections.PlayerData> cursor = players.find(Filters.eq("rank", rank.ordinal())).limit(25).iterator()) {
             while (cursor.hasNext())
                 output.add(new PlayerData(cursor.next()));
         }
@@ -75,6 +66,10 @@ public class PlayerData {
     public static int getNextID() {
         plugin.database.collections.PlayerData data = players.find().sort(new BasicDBObject("_id", -1)).first();
         return (data == null) ? 0 : data.id + 1;
+    }
+
+    public Player getPlayer(){
+        return Groups.player.find(t-> t.uuid().equals(getUuid()));
     }
 
     //setters
