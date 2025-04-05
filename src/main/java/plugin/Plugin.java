@@ -85,12 +85,13 @@ public class Plugin extends mindustry.mod.Plugin implements ApplicationListener 
         loadHistory();
         Log.info("Plugin started!");
         Bundle.load(Plugin.class);
-
+        Events.on(EventType.PlayerConnect.class, event -> {
+                  kickIfBanned(event.player);
+        });
         Events.on(EventType.PlayerJoin.class, event -> {
             Player plr = event.player;
             if (!plr.admin) welcomeMenu(plr);
             plugin.database.wrappers.PlayerData data = new plugin.database.wrappers.PlayerData(event.player);
-            kickIfBanned(event.player);
             String joinMessage = data.getJoinMessage().trim();
             Call.sendMessage(joinMessage.replace("@", plr.name()) + " [grey][" + data.getId() + "]");
             Log.info(plr.plainName() + " joined! " + "[" + data.getId() + "]");
