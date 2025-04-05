@@ -28,6 +28,7 @@ import plugin.configs.ConfigJson;
 import plugin.discord.Bot;
 import plugin.funcs.AntiVpn;
 import plugin.database.collections.PlayerData;
+import plugin.models.Ranks;
 import useful.Bundle;
 
 import java.io.File;
@@ -86,11 +87,14 @@ public class Plugin extends mindustry.mod.Plugin implements ApplicationListener 
         Log.info("Plugin started!");
         Bundle.load(Plugin.class);
 
+        Events.on(EventType.PlayerConnect.class, event -> {
+                  kickIfBanned(event.player);
+        });
         Events.on(EventType.PlayerJoin.class, event -> {
             Player plr = event.player;
             if (!plr.admin) welcomeMenu(plr);
             plugin.database.wrappers.PlayerData data = new plugin.database.wrappers.PlayerData(event.player);
-            kickIfBanned(event.player);
+            plr.admin(data.getRank().equal(Ranks.Rank.Moderator));
             String joinMessage = data.getJoinMessage().trim();
             Call.sendMessage(joinMessage.replace("@", plr.name()) + " [grey][" + data.getId() + "]");
             Log.info(plr.plainName() + " joined! " + "[" + data.getId() + "]");

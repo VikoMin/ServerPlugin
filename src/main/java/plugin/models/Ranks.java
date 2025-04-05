@@ -42,25 +42,9 @@ public class Ranks {
         return Rank.None;
     }
     public static Rank getRank(String name) {
-        switch (name.toLowerCase()) {
-            case "player" -> {
-                return Rank.Player;
-            }
-            case "verified" -> {
-                return Rank.Verified;
-            }
-            case "moderator" -> {
-                return Rank.Moderator;
-            }
-            case "js" -> {
-                return Rank.JS;
-            }
-            case "administrator" -> {
-                return Rank.Administrator;
-            }
-            default -> {
-                return Rank.None;
-            }
-        }
+        for (Rank rank: Rank.values())
+            if (rank.name.equalsIgnoreCase(name) || Integer.toString(rank.ordinal()).equals(name))
+                return rank;
+        return Rank.None;
     }
 }

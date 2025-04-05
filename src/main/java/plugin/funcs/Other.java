@@ -70,7 +70,7 @@ public class Other {
 
     public static void statsMenu(Player player, Player reqPlayer) {
         PlayerData data = new PlayerData(reqPlayer);
-        String rank = data.getRank().name();
+        String rank = data.getRank().getColoredName();
         String title = "\uE86B Stats";
         long playtime = Long.parseLong(String.valueOf(data.getPlaytime()));
         String description = "[orange]Name: " + reqPlayer.name()

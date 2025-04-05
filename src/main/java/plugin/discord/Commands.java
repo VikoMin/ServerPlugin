@@ -1,6 +1,7 @@
 package plugin.discord;
 
 import arc.Events;
+import arc.struct.ObjectSet;
 import arc.util.Http;
 import arc.util.Log;
 import arc.util.Timer;
@@ -11,6 +12,7 @@ import mindustry.gen.Call;
 import mindustry.gen.Groups;
 import mindustry.gen.Player;
 import mindustry.maps.Map;
+import mindustry.net.Administration;
 import mindustry.server.ServerControl;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import plugin.configs.ConfigJson;
@@ -22,6 +24,7 @@ import useful.Bundle;
 import java.awt.*;
 import java.io.*;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -36,7 +39,6 @@ import static plugin.models.Ranks.getRank;
 import static plugin.funcs.Other.*;
 import static plugin.menus.MenuHandler.loginMenu;
 import static plugin.menus.MenuHandler.loginMenuFunction;
-import static plugin.Utilities.findPlayerByName;
 
 public class Commands {
     public static void load() {
@@ -80,7 +82,7 @@ public class Commands {
                                 .setColor(Color.RED)
                                 .addField("Name", stripColors(data.getNames().toString()))
                                 .addField("ID", String.valueOf(data.getId()))
-                                .addField("Rank", data.getRank().getColoredName())
+                                .addField("Rank", data.getRank().getName())
                                 .addField("Playtime", Bundle.formatDuration(Duration.ofMinutes(playtime)));
                         if (data.getDiscordId() != 0) {
                             embed.addField("Discord", "<@" + data.getDiscordId() + ">");
@@ -129,7 +131,7 @@ public class Commands {
                     }
                     Player plr = Groups.player.find(p -> p.uuid().equals(data.getUuid()));
                     if (plr == null) {
-                        Log.info("PlayerData is offline, not kicking him");
+                        Log.info("Player is offline, not kicking him");
                     } else {
                         plr.con.kick("[red]You have been banned!\n\n" + "[white]Reason: " + args[2] + "\nDuration: " + timeUntilUnban + " until unban\nIf you think this is a mistake, make sure to appeal ban in our discord: " + discordUrl, 0);
                     }
@@ -137,19 +139,6 @@ public class Commands {
                     Call.sendMessage(data.getLastName() + " has been banned for: " + args[2]);
                     data.setLastBanTime(banTime);
                     Bot.banchannel.sendMessage(banEmbed(data, message.getAuthor(), args[2], banTime));
-                });
-        DiscordCommandRegister.create("infoip")
-                .addRole(ConfigJson.moderatorId)
-                .desc("Trace ip")
-                .args("<ip>")
-                .requiredArgs(1)
-                .build((message, string) -> {
-                    var data = PlayerData.findByIp(string);
-                    if (data.isEmpty()) {
-                        message.getChannel().sendMessage("Can`t find player with this ip!");
-                        return;
-                    }
-                    message.getChannel().sendMessage(Utilities.stringify(data, d -> d.getLastName() + " [" + d.getId() + "]" + " [" + d.getUuid() + "]\n"));
                 });
         DiscordCommandRegister.create("info")
                 .desc("Get player info")
@@ -165,30 +154,11 @@ public class Commands {
                     if (data.isExist()) message.getChannel().sendMessage(Embed.infoEmbed(data));
                     else message.getChannel().sendMessage("nonexistent id!");
                 });
-        DiscordCommandRegister.create("adminadd")
-                .desc("Admin player")
-                .args("<name...>")
-                .hidden(true)
-                .addRole(ConfigJson.adminId)
-                .requiredArgs(1)
-                .build((message, string) -> {
-                    Player player = findPlayerByName(string);
-                    if (player == null) {
-                        message.getChannel().sendMessage("Could not find that player!");
-                        return;
-                    }
-                    if (player.admin()) {
-                        message.getChannel().sendMessage("Player is already admin!");
-                        return;
-                    }
-                    netServer.admins.adminPlayer(player.uuid(), player.usid());
-                    player.admin = true;
-                    message.getChannel().sendMessage("Successfully admin: " + player.plainName());
-                });
+
         DiscordCommandRegister.create("setrank")
                 .desc("Set player rank")
                 .args("<id> <rank>")
-                .requiredArgs(1)
+                .requiredArgs(2)
                 .addRole(ConfigJson.adminId)
                 .build((message, string) -> {
                     String[] args = string.split(" ");
@@ -199,12 +169,26 @@ public class Commands {
                     PlayerData data = new PlayerData(Integer.parseInt(args[0]));
                     if (!data.isExist()) {
                         message.getChannel().sendMessage("No such player!");
-                    } else if (getRank(args[2]) == Ranks.Rank.None) {
-                        message.getChannel().sendMessage("This rank doesnt exist!");
+                    } else if (getRank(args[1]) == Ranks.Rank.None) {
+                        message.getChannel().sendMessage("This rank doesn't exist!");
                     } else {
-                        data.setRank(args[2]);
+                        data.setRank(args[1]);
                         message.getChannel().sendMessage("Rank has been given!");
+                        if (data.getPlayer() != null)
+                            data.getPlayer().admin(data.getRank().equal(Ranks.Rank.Moderator));
                     }
+                });
+        DiscordCommandRegister.create("searchrank")
+                .desc("")
+                .requiredArgs(1)
+                .args("<args>")
+                .build((message, string) -> {
+                    ArrayList<PlayerData> players = PlayerData.findByRank(string);
+                    if (players.isEmpty()) {
+                        message.getChannel().sendMessage("Can`t find player with this rank!");
+                        return;
+                    }
+                    message.getChannel().sendMessage(Utilities.stringify(players, d -> d.getLastName() + " [" + d.getId() + "]" + " [" + d.getUuid() + "]\n"));
                 });
         DiscordCommandRegister.create("gameover")
                 .desc("game over")
@@ -238,14 +222,15 @@ public class Commands {
                     }
                 });
         DiscordCommandRegister.create("search")
-                .args("<name...>")
+                .args("<IP|uuid|name>")
                 .requiredArgs(1)
-                .desc("Search player by name")
+                .desc("Search player")
                 .build((message, string) -> {
                     StringBuilder output = new StringBuilder();
+                    ObjectSet<Administration.PlayerInfo> players = netServer.admins.findByName(string);
                     output.append("```Results:\n\n");
-                    for (PlayerData data : PlayerData.findByName(string))
-                        output.append(data.getLastName()).append("; ID: ").append(data.getId()).append("\n");
+                    for (Administration.PlayerInfo player : players)
+                        output.append(player.plainLastName()).append("; ID: ").append(new PlayerData(player.id).getId()).append("\n");
                     output.append("```");
                     message.getChannel().sendMessage(String.valueOf(output));
                 });
