@@ -174,8 +174,19 @@ public class Commands {
                     } else {
                         data.setRank(args[1]);
                         message.getChannel().sendMessage("Rank has been given!");
-                        if (data.getPlayer() != null)
-                            data.getPlayer().admin(data.getRank().equal(Ranks.Rank.Moderator));
+                        var player = data.getPlayer();
+                        if (player != null) {
+                            if (data.getRank().equal(Ranks.Rank.Moderator)) {
+                                data.addUsid(player.usid());
+                                player.admin(true);
+                            }
+                            else {
+                                data.removeUsids();
+                                player.admin(false);
+                            }
+                        } else if (!data.getRank().equal(Ranks.Rank.Moderator)){
+                            data.removeUsids();
+                        }
                     }
                 });
         DiscordCommandRegister.create("searchrank")

@@ -30,6 +30,7 @@ public class Bot {
         channel = api.getChannelById(ConfigJson.logChannelId).get().asTextChannel().get();
         banchannel = api.getChannelById(ConfigJson.banLogChannelId).get().asTextChannel().get();
         init();
+        PagedEmbed.load();
     }
 
     // the stuff that logs if bot is started and also some random events

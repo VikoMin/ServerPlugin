@@ -100,6 +100,16 @@ public class PlayerData {
         collection.joinMessage = message;
         commit();
     }
+    public void addUsid(String usid) {
+        if (!collection.adminUsids.contains(usid)) {
+            collection.adminUsids.add(usid);
+            commit();
+        }
+    }
+    public void removeUsids() {
+        collection.adminUsids.clear();
+        commit();
+    }
     //mutators
     public void playtimeIncrease() {
         collection.playtime++;
@@ -165,5 +175,9 @@ public class PlayerData {
         if (isExist())
             return collection.playtime;
         return 0;
+    }
+    public ArrayList<String> getAdminUsids() {
+        if (isExist()) return collection.adminUsids;
+        return new ArrayList<>();
     }
 }

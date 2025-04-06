@@ -94,7 +94,9 @@ public class Plugin extends mindustry.mod.Plugin implements ApplicationListener 
             Player plr = event.player;
             if (!plr.admin) welcomeMenu(plr);
             plugin.database.wrappers.PlayerData data = new plugin.database.wrappers.PlayerData(event.player);
-            plr.admin(data.getRank().equal(Ranks.Rank.Moderator));
+            if (data.getRank().equal(Ranks.Rank.Moderator)) {
+              plr.admin(data.getAdminUsids().contains(plr.usid()));
+            }
             String joinMessage = data.getJoinMessage().trim();
             Call.sendMessage(joinMessage.replace("@", plr.name()) + " [grey][" + data.getId() + "]");
             Log.info(plr.plainName() + " joined! " + "[" + data.getId() + "]");
