@@ -104,7 +104,7 @@ public class History {
     }
 
     public static String format(HistoryObject obj) {
-        return Bundle.formatDateTime(obj.time) + " " + obj.actionPlayer.name() + "[grey] [" + new PlayerData(obj.actionPlayer).getId() + "][white] " + obj.action + " " + obj.actionBlock.emoji() + "\n";
+        return Bundle.formatDateTime(obj.time) + " " + obj.actionPlayer.name() + "[grey] [" + obj.playerId + "][white] " + obj.action + " " + obj.actionBlock.emoji() + "\n";
     }
 
     public static HistoryTile getTile(Tile tile) {
