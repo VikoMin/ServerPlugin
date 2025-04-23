@@ -16,6 +16,7 @@ import mindustry.net.Administration;
 import mindustry.server.ServerControl;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import plugin.configs.ConfigJson;
+import plugin.database.wrappers.UsidBan;
 import plugin.discord.commands.DiscordCommandRegister;
 import plugin.models.Ranks;
 import plugin.database.wrappers.PlayerData;
@@ -134,10 +135,16 @@ public class Commands {
                         Log.info("Player is offline, not kicking him");
                     } else {
                         plr.con.kick("[red]You have been banned!\n\n" + "[white]Reason: " + args[2] + "\nDuration: " + timeUntilUnban + " until unban\nIf you think this is a mistake, make sure to appeal ban in our discord: " + discordUrl, 0);
+                        UsidBan.builder()
+                               .setUuid(plr.uuid())
+                               .setUsid(plr.usid())
+                               .setUnbanTime(banTime)
+                               .commit();
                     }
                     message.getChannel().sendMessage("Banned: " + data.getLastName());
                     Call.sendMessage(data.getLastName() + " has been banned for: " + args[2]);
                     data.setLastBanTime(banTime);
+
                     Bot.banchannel.sendMessage(banEmbed(data, message.getAuthor(), args[2], banTime));
                 });
         DiscordCommandRegister.create("info")
@@ -262,6 +269,10 @@ public class Commands {
                         message.getChannel().sendMessage("User is not banned!");
                     } else {
                         data.setLastBanTime(0L);
+                        var usidBan = new UsidBan(data.getUuid());
+                        if (usidBan.isExist()){
+                            usidBan.delete();
+                        }
                         message.getChannel().sendMessage(data.getLastName() + " has been unbanned!");
                     }
                 });

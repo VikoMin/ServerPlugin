@@ -10,6 +10,7 @@ import mindustry.gen.Call;
 import mindustry.gen.Player;
 import mindustry.net.Administration.TraceInfo;
 import mindustry.net.Packets.KickReason;
+import plugin.database.wrappers.UsidBan;
 import plugin.discord.Bot;
 import plugin.database.wrappers.PlayerData;
 import useful.Action;
@@ -119,6 +120,13 @@ public class BanMenu {
                 target.con.kick("[red]You have been banned!\n\n" + "[white]Reason: " + text + "\nDuration: " + timeUntilUnban + " until unban\nIf you think this is a mistake, make sure to appeal ban in our discord: " + discordUrl, 0);
                 Call.sendMessage(target.plainName() + " has been banned for: " + text);
                 data.setLastBanTime(banTime);
+                UsidBan.builder()
+                        .setUsid(target.usid())
+                        .setUnbanTime(duration * 24 * 3600 * 1000)
+                        .setUuid(target.uuid())
+                        .commit();
+
+
                 Bot.banchannel.sendMessage(banEmbed(target, view.player, text, banTime));
             });
         });

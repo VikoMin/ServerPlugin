@@ -25,6 +25,7 @@ import org.json.simple.parser.ParseException;
 import plugin.commands.VoteSession;
 import plugin.commands.handlers.ChatListener;
 import plugin.configs.ConfigJson;
+import plugin.database.collections.UsidBan;
 import plugin.discord.Bot;
 import plugin.funcs.AntiVpn;
 import plugin.database.collections.PlayerData;
@@ -55,6 +56,7 @@ public class Plugin extends mindustry.mod.Plugin implements ApplicationListener 
     public static MongoClient mongoClient;
     public static MongoDatabase db;
     public static MongoCollection<PlayerData> players;
+    public static MongoCollection<UsidBan> usidBans;
     public static JSONObject servers;
 
     static {
@@ -74,6 +76,7 @@ public class Plugin extends mindustry.mod.Plugin implements ApplicationListener 
         mongoClient = MongoClients.create(string);
         db = mongoClient.getDatabase("mindustry").withCodecRegistry(pojoCodecRegistry);
         players = db.getCollection("players", PlayerData.class);
+        usidBans = db.getCollection("usidbans", UsidBan.class);
         File dir = new File(Vars.tmpDirectory.absolutePath());
         if (!dir.exists())
             dir.mkdir();

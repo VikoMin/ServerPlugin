@@ -1,5 +1,6 @@
 package plugin.funcs;
 
+import arc.util.Time;
 import arc.util.Timer;
 import mindustry.Vars;
 import mindustry.gen.Call;
@@ -7,6 +8,7 @@ import mindustry.gen.Groups;
 import mindustry.gen.Player;
 import mindustry.net.NetConnection;
 import plugin.database.wrappers.PlayerData;
+import plugin.database.wrappers.UsidBan;
 import plugin.menus.MenuHandler;
 import useful.Bundle;
 
@@ -63,6 +65,15 @@ public class Other {
             Date date = new Date();
             if (lastBan > date.getTime()) {
                 String timeUntilUnban = Bundle.formatDuration(lastBan - date.getTime());
+                player.kick("[red]You have been banned!\n\n" + "[white]Duration: " + timeUntilUnban + "until unban\nYour ID: " + data.getId() + "\n\nIf you think this is a mistake, make sure to appeal ban in our discord: " + discordUrl, 0);
+                return;
+            }
+        }
+        UsidBan ban = new UsidBan(player);
+        if (ban.isExist()){
+            if (ban.isExpired()) ban.delete();
+            else{
+                String timeUntilUnban = Bundle.formatDuration(ban.getUnbanTime() - Time.millis());
                 player.kick("[red]You have been banned!\n\n" + "[white]Duration: " + timeUntilUnban + "until unban\nYour ID: " + data.getId() + "\n\nIf you think this is a mistake, make sure to appeal ban in our discord: " + discordUrl, 0);
             }
         }
