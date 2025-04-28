@@ -11,7 +11,7 @@ public class PlayerData {
     public ArrayList<String> ips = new ArrayList<>();
     public long lastBan = 0;
     public long discordId = 0;
-    public int playtime = 0;
+    public long playtime = 0;
     public boolean isVip = false;
     public ArrayList<String> adminUsids = new ArrayList<>();
     public PlayerData(){} //necessary for mongodb

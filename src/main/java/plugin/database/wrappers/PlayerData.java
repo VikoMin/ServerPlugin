@@ -111,8 +111,8 @@ public class PlayerData {
         commit();
     }
     //mutators
-    public void playtimeIncrease() {
-        collection.playtime++;
+    public void increasePlaytime(int value) {
+        collection.playtime += value;
         commit();
     }
 
@@ -171,7 +171,7 @@ public class PlayerData {
         return 0;
     }
 
-    public int getPlaytime() {
+    public long getPlaytime() {
         if (isExist())
             return collection.playtime;
         return 0;

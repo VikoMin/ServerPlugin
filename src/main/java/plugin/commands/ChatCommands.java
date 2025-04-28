@@ -185,7 +185,7 @@ public class ChatCommands {
         list.append("[orange]Playtime leaderboard: \n");
         FindIterable<PlayerData> sort = players.find().sort(new BasicDBObject("playtime", -1)).limit(10);
         for (PlayerData data : sort) {
-            int playtime = data.playtime;
+            long playtime = data.playtime;
             list.append(data.rawName).append("[white]: ").append(Bundle.formatDuration(Duration.ofMinutes(playtime))).append("\n");
         }
         player.sendMessage(list.toString());

@@ -1,10 +1,8 @@
 package plugin.funcs;
 
 import arc.util.Time;
-import arc.util.Timer;
 import mindustry.Vars;
 import mindustry.gen.Call;
-import mindustry.gen.Groups;
 import mindustry.gen.Player;
 import mindustry.net.NetConnection;
 import plugin.database.wrappers.PlayerData;
@@ -18,16 +16,6 @@ import java.util.Date;
 import static plugin.configs.ConfigJson.discordUrl;
 
 public class Other {
-    public static void PlaytimeTimer() {
-        Timer.schedule(() -> {
-            for (Player player : Groups.player) {
-                PlayerData data = new PlayerData(player);
-                if (data.isExist())
-                    data.playtimeIncrease();
-            }
-        }, 0, 60);
-    }
-
     public static void welcomeMenu(Player player) {
         String title = "\uE86B Добро пожаловать!";
         String description = """

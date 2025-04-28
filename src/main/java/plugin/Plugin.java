@@ -30,9 +30,11 @@ import plugin.discord.Bot;
 import plugin.funcs.AntiVpn;
 import plugin.database.collections.PlayerData;
 import plugin.models.Ranks;
+import plugin.models.Sessions;
 import useful.Bundle;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import static com.mongodb.MongoClientSettings.getDefaultCodecRegistry;
@@ -47,7 +49,6 @@ import static plugin.commands.ChatCommands.*;
 import static plugin.commands.history.History.historyPlayers;
 import static plugin.commands.history.History.loadHistory;
 import static plugin.funcs.AntiVpn.loadAntiVPN;
-import static plugin.funcs.Other.PlaytimeTimer;
 import static plugin.funcs.Other.kickIfBanned;
 import static plugin.funcs.Other.welcomeMenu;
 
@@ -58,6 +59,7 @@ public class Plugin extends mindustry.mod.Plugin implements ApplicationListener 
     public static MongoCollection<PlayerData> players;
     public static MongoCollection<UsidBan> usidBans;
     public static JSONObject servers;
+    public static Sessions sessions;
 
     static {
         try {
@@ -70,6 +72,7 @@ public class Plugin extends mindustry.mod.Plugin implements ApplicationListener 
     public Plugin() throws IOException, ParseException {
         ConfigJson.read();
         Bot.load();
+        sessions = new Sessions();
         ConnectionString string = new ConnectionString(ConfigJson.mongodbUrl);
         CodecProvider pojoCodecProvider = PojoCodecProvider.builder().automatic(true).build();
         CodecRegistry pojoCodecRegistry = fromRegistries(getDefaultCodecRegistry(), fromProviders(pojoCodecProvider));
@@ -80,6 +83,13 @@ public class Plugin extends mindustry.mod.Plugin implements ApplicationListener 
         File dir = new File(Vars.tmpDirectory.absolutePath());
         if (!dir.exists())
             dir.mkdir();
+        File sessionsCSV = new File("sessions.csv");
+        if (!sessionsCSV.exists()){
+            sessionsCSV.createNewFile();
+            FileWriter csv = new FileWriter("sessions.csv");
+            csv.append("id;connectionTime;disconnectionTime;messages;built;destroyed\n");
+            csv.close();
+        }
     }
 
     //  starts once plugin is started
@@ -93,10 +103,13 @@ public class Plugin extends mindustry.mod.Plugin implements ApplicationListener 
         Events.on(EventType.PlayerConnect.class, event -> {
                   kickIfBanned(event.player);
         });
+
         Events.on(EventType.PlayerJoin.class, event -> {
             Player plr = event.player;
+            plr.name = plr.name.replace("@", "");
             if (!plr.admin) welcomeMenu(plr);
             plugin.database.wrappers.PlayerData data = new plugin.database.wrappers.PlayerData(event.player);
+            sessions.createSession(player);
             if (data.getRank().equal(Ranks.Rank.Moderator)) {
               plr.admin(data.getAdminUsids().contains(plr.usid()));
             }
@@ -104,8 +117,6 @@ public class Plugin extends mindustry.mod.Plugin implements ApplicationListener 
             Call.sendMessage(joinMessage.replace("@", plr.name()) + " [grey][" + data.getId() + "]");
             Log.info(plr.plainName() + " joined! " + "[" + data.getId() + "]");
         });
-
-        PlaytimeTimer();
 
         net.handleServer(Packets.Connect.class, (con, connect) -> {
             Events.fire(new EventType.ConnectionEvent(con));
@@ -141,6 +152,7 @@ public class Plugin extends mindustry.mod.Plugin implements ApplicationListener 
         });
 
         Events.on(EventType.PlayerChatEvent.class, event -> {
+            sessions.getSession(event.player).increaseMessages();
             if (isVoting) {
                 int votesRequired = (int) Math.ceil((double) Groups.player.size() / 2);
                 switch (event.message) {
@@ -166,8 +178,14 @@ public class Plugin extends mindustry.mod.Plugin implements ApplicationListener 
             }
         });
 
+        Events.on(EventType.BlockBuildEndEvent.class, event -> {
+            if (event.unit.isPlayer())
+                sessions.getSession(event.unit.getPlayer()).increaseBlocks(event.breaking);
+        });
+
         Events.on(EventType.PlayerLeave.class, event -> {
             Player player = event.player;
+            sessions.closeSession(player);
             historyPlayers.remove(player.uuid());
             plugin.database.wrappers.PlayerData data = new plugin.database.wrappers.PlayerData(player);
             Call.sendMessage(player.name() + "[white] left " + "[grey][" + data.getId() + "]");
