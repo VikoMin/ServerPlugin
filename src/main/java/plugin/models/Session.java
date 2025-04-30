@@ -1,5 +1,6 @@
 package plugin.models;
 
+import mindustry.Vars;
 import mindustry.gen.Player;
 import plugin.database.wrappers.PlayerData;
 
@@ -38,6 +39,7 @@ public class Session {
         try {
             FileWriter csv = new FileWriter("sessions.csv");
             csv.append(String.valueOf(id)).append(";").
+                    append(String.valueOf(Vars.port)).append(";").
                     append(String.valueOf(connectionTime)).append(";").
                     append(String.valueOf(connectionTime)).append(";").
                     append(String.valueOf(messages)).append(";").

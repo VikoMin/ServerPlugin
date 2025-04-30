@@ -87,7 +87,7 @@ public class Plugin extends mindustry.mod.Plugin implements ApplicationListener 
         if (!sessionsCSV.exists()){
             sessionsCSV.createNewFile();
             FileWriter csv = new FileWriter("sessions.csv");
-            csv.append("id;connectionTime;disconnectionTime;messages;built;destroyed\n");
+            csv.append("id;serverPort;connectionTime;disconnectionTime;messages;built;destroyed\n");
             csv.close();
         }
     }
