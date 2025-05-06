@@ -109,7 +109,7 @@ public class Plugin extends mindustry.mod.Plugin implements ApplicationListener 
             plr.name = plr.name.replace("@", "");
             if (!plr.admin) welcomeMenu(plr);
             plugin.database.wrappers.PlayerData data = new plugin.database.wrappers.PlayerData(event.player);
-            sessions.createSession(player);
+            sessions.createSession(plr);
             if (data.getRank().equal(Ranks.Rank.Moderator)) {
               plr.admin(data.getAdminUsids().contains(plr.usid()));
             }

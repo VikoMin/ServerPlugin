@@ -111,7 +111,7 @@ public class PlayerData {
         commit();
     }
     //mutators
-    public void increasePlaytime(int value) {
+    public void increasePlaytime(long value) {
         collection.playtime += value;
         commit();
     }

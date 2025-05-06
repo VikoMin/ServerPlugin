@@ -35,13 +35,13 @@ public class Session {
     public void commit(){
         Instant disconnectionTime = Instant.now();
         PlayerData player = new PlayerData(((int) id));
-        player.increasePlaytime(disconnectionTime.get(ChronoField.INSTANT_SECONDS) - connectionTime.get(ChronoField.INSTANT_SECONDS));
+        player.increasePlaytime(disconnectionTime.getLong(ChronoField.INSTANT_SECONDS) - connectionTime.getLong(ChronoField.INSTANT_SECONDS));
         try {
             FileWriter csv = new FileWriter("sessions.csv");
             csv.append(String.valueOf(id)).append(";").
                     append(String.valueOf(Vars.port)).append(";").
                     append(String.valueOf(connectionTime)).append(";").
-                    append(String.valueOf(connectionTime)).append(";").
+                    append(String.valueOf(disconnectionTime)).append(";").
                     append(String.valueOf(messages)).append(";").
                     append(String.valueOf(blocksBuilt)).append(";").
                     append(String.valueOf(blocksDestroyed)).append("\n");
