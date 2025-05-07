@@ -45,6 +45,7 @@ public class Session {
                     append(String.valueOf(messages)).append(";").
                     append(String.valueOf(blocksBuilt)).append(";").
                     append(String.valueOf(blocksDestroyed)).append("\n");
+csv.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
