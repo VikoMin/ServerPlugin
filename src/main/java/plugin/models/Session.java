@@ -1,7 +1,7 @@
 package plugin.models;
 
-import mindustry.Vars;
 import mindustry.gen.Player;
+import mindustry.net.Administration;
 import plugin.database.wrappers.PlayerData;
 
 import java.io.FileWriter;
@@ -37,15 +37,15 @@ public class Session {
         PlayerData player = new PlayerData(((int) id));
         player.increasePlaytime(disconnectionTime.getLong(ChronoField.INSTANT_SECONDS) - connectionTime.getLong(ChronoField.INSTANT_SECONDS));
         try {
-            FileWriter csv = new FileWriter("sessions.csv");
+            FileWriter csv = new FileWriter("sessions.csv", true);
             csv.append(String.valueOf(id)).append(";").
-                    append(String.valueOf(Vars.port)).append(";").
-                    append(String.valueOf(connectionTime)).append(";").
-                    append(String.valueOf(disconnectionTime)).append(";").
+                    append(String.valueOf(Administration.Config.port)).append(";").
+                    append(String.valueOf(connectionTime).split("\\.")[0]).append(";").
+                    append(String.valueOf(disconnectionTime).split("\\.")[0]).append(";").
                     append(String.valueOf(messages)).append(";").
                     append(String.valueOf(blocksBuilt)).append(";").
                     append(String.valueOf(blocksDestroyed)).append("\n");
-csv.close();
+            csv.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
