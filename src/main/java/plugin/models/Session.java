@@ -39,7 +39,7 @@ public class Session {
         try {
             FileWriter csv = new FileWriter("sessions.csv", true);
             csv.append(String.valueOf(id)).append(";").
-                    append(String.valueOf(Administration.Config.port)).append(";").
+                    append(Administration.Config.serverName.string()).append(";").
                     append(String.valueOf(connectionTime).split("\\.")[0]).append(";").
                     append(String.valueOf(disconnectionTime).split("\\.")[0]).append(";").
                     append(String.valueOf(messages)).append(";").
