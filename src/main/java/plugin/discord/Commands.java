@@ -269,7 +269,7 @@ public class Commands {
                         message.getChannel().sendMessage("User is not banned!");
                     } else {
                         data.setLastBanTime(0L);
-                        var usidBan = new UsidBan(data.getUuid());
+                        var usidBan = UsidBan.findByUuid(data.getUuid());
                         if (usidBan.isExist()){
                             usidBan.delete();
                         }
