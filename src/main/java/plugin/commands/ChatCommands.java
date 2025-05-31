@@ -81,7 +81,7 @@ public class ChatCommands {
         StringBuilder list = new StringBuilder();
         int page;
         if (args.isEmpty()) {
-            page = 0;
+            page = 1;
         } else {
             if (!canParseInt(args.get(0))) {
                 player.sendMessage("[red]Page must be number!");
@@ -91,8 +91,9 @@ public class ChatCommands {
         }
         int mapsPerPage = 10;
         Seq<Map> maps = getMaps();
+        page--;
         maps.list().stream().skip(page * 10L).limit(mapsPerPage + (page * 10L)).forEach(
-                map -> list.append(map.name()).append("[white], by ").append(map.author()).append("\n")
+                map -> list.append("[white]").append(map.name()).append("[white], by ").append(map.author()).append("\n")
         );
         if (!String.valueOf(list).contains("by")) {
             player.sendMessage("[red]No maps detected!");
@@ -116,7 +117,7 @@ public class ChatCommands {
             player.sendMessage("Could not find that map!");
             return;
         }
-        Call.sendMessage(player.name() + "[#e7e7e7] Started vote for map " + choosedMap.plainName() + "[#e7e7e7] -> " + votes.get() + "/" + votesRequired[0] + ", y/n to vote");
+        Call.sendMessage(player.name() + "[#e7e7e7] Started vote for map \"[white]" + choosedMap.plainName() + "[#e7e7e7]\" -> " + votes.get() + "/" + votesRequired[0] + ", y/n to vote");
         isVoting = true;
         timer.schedule((new TimerTask() {
             @Override
@@ -184,9 +185,16 @@ public class ChatCommands {
         StringBuilder list = new StringBuilder();
         list.append("[orange]Playtime leaderboard: \n");
         FindIterable<PlayerData> sort = players.find().sort(new BasicDBObject("playtime", -1)).limit(10);
+        int place = 0;
+        String color;
         for (PlayerData data : sort) {
             long playtime = data.playtime;
-            list.append(data.rawName).append("[white]: ").append(Bundle.formatDuration(Duration.ofMinutes(playtime))).append("\n");
+            if (place == 1) {color = "[gold]";}
+            else if (place == 2) {color = "[lightgray]";}
+            else if (place == 3) {color = "[#cd7f32]";}
+            else {color = "[white]";}
+            list.append(color).append("#").append(place).append("[white] - ").append(data.rawName).append(" (").append(Bundle.formatDuration(Duration.ofMinutes(playtime))).append("[white])\n");
+            place++;
         }
         player.sendMessage(list.toString());
     }
@@ -233,7 +241,7 @@ public class ChatCommands {
 
         for (int i = commandsPerPage * page; i < Math.min(commandsPerPage * (page + 1), ChatListener.commands.size); i++){
             ChatCommand command = ChatListener.commands.get(i);
-            result.append("[orange] /").append(command.name()).append("[white] ").append(command.args()).append("[lightgray] - ").append(command.description()).append("\n");
+            result.append("[orange] /").append(command.name()).append(command.args().isEmpty() ? "" : " [white]").append(command.args()).append("[lightgray] - ").append(command.description()).append("\n");
         }
         player.sendMessage(result.toString());
     }
