@@ -92,7 +92,7 @@ public class ChatCommands {
         int mapsPerPage = 10;
         Seq<Map> maps = getMaps();
         maps.list().stream().skip(page * 10L).limit(mapsPerPage + (page * 10L)).forEach(
-                map -> list.append(map.name()).append("[white], by ").append(map.author()).append("\n")
+                map -> list.append("[white]").append(map.name()).append("[white], by ").append(map.author()).append("\n")
         );
         if (!String.valueOf(list).contains("by")) {
             player.sendMessage("[red]No maps detected!");
@@ -184,9 +184,16 @@ public class ChatCommands {
         StringBuilder list = new StringBuilder();
         list.append("[orange]Playtime leaderboard: \n");
         FindIterable<PlayerData> sort = players.find().sort(new BasicDBObject("playtime", -1)).limit(10);
+        int place = 0;
+        String color;
         for (PlayerData data : sort) {
             long playtime = data.playtime;
-            list.append(data.rawName).append("[white]: ").append(Bundle.formatDuration(Duration.ofMinutes(playtime))).append("\n");
+            if (place == 1) {color = "[gold]";}
+            else if (place == 2) {color = "[lightgray]";}
+            else if (place == 3) {color = "[#cd7f32]";}
+            else {color = "[white]";}
+            list.append(color).append("#").append(place).append("[white] - ").append(data.rawName).append(" (").append(Bundle.formatDuration(Duration.ofMinutes(playtime))).append("[white])\n");
+            place++;
         }
         player.sendMessage(list.toString());
     }
