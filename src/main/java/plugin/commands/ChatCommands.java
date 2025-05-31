@@ -81,7 +81,7 @@ public class ChatCommands {
         StringBuilder list = new StringBuilder();
         int page;
         if (args.isEmpty()) {
-            page = 0;
+            page = 1;
         } else {
             if (!canParseInt(args.get(0))) {
                 player.sendMessage("[red]Page must be number!");
@@ -91,6 +91,7 @@ public class ChatCommands {
         }
         int mapsPerPage = 10;
         Seq<Map> maps = getMaps();
+        page--;
         maps.list().stream().skip(page * 10L).limit(mapsPerPage + (page * 10L)).forEach(
                 map -> list.append("[white]").append(map.name()).append("[white], by ").append(map.author()).append("\n")
         );
@@ -116,7 +117,7 @@ public class ChatCommands {
             player.sendMessage("Could not find that map!");
             return;
         }
-        Call.sendMessage(player.name() + "[#e7e7e7] Started vote for map " + choosedMap.plainName() + "[#e7e7e7] -> " + votes.get() + "/" + votesRequired[0] + ", y/n to vote");
+        Call.sendMessage(player.name() + "[#e7e7e7] Started vote for map \"[white]" + choosedMap.plainName() + "[#e7e7e7]\" -> " + votes.get() + "/" + votesRequired[0] + ", y/n to vote");
         isVoting = true;
         timer.schedule((new TimerTask() {
             @Override
