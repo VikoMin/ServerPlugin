@@ -240,7 +240,7 @@ public class ChatCommands {
 
         for (int i = commandsPerPage * page; i < Math.min(commandsPerPage * (page + 1), ChatListener.commands.size); i++){
             ChatCommand command = ChatListener.commands.get(i);
-            result.append("[orange] /").append(command.name()).append("[white] ").append(command.args()).append("[lightgray] - ").append(command.description()).append("\n");
+            result.append("[orange] /").append(command.name()).append(command.args().isEmpty() ? "" : " [white]").append(command.args()).append("[lightgray] - ").append(command.description()).append("\n");
         }
         player.sendMessage(result.toString());
     }
