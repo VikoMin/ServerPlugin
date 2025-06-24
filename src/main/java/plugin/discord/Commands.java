@@ -302,8 +302,12 @@ public class Commands {
                 .requiredArgs(1)
                 .desc("run js")
                 .build((message, string) -> {
-                    Utilities.runJs(string, resp -> {
+                    /*Utilities.runJs(string, resp -> {
                         if (!resp.isEmpty()) message.getChannel().sendMessage(resp);
+                    });*/
+                    Core.app.post(()->{
+                        String result = Vars.mods.getScripts().runConsole(string);
+                        message.getChannel().sendMessage(result.isEmpty() ? "Nothing." : result);
                     });
                 });
         DiscordCommandRegister.create("exit")
