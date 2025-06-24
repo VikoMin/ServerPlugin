@@ -208,7 +208,7 @@ public class ChatCommands {
         player.sendMessage(list.toString());
     }
 
-    @ChatCommand(name = "serverhop", args = "<str server_name>", description = "Hops to server", minArgsCount = 1)
+    /*@ChatCommand(name = "serverhop", args = "<str server_name>", description = "Hops to server", minArgsCount = 1)
     public void serverHop(Player player, List<String> args) {
         JSONArray array = (JSONArray) servers.get("servers");
         Seq<Server> servers = new Seq<>();
@@ -233,7 +233,7 @@ public class ChatCommands {
             list.append(jsonObject.get("servername")).append(": ").append(jsonObject.get("ip")).append(":").append(jsonObject.get("port")).append("\n");
         }
         player.sendMessage(list.toString());
-    }
+    }*/
 
     @ChatCommand(name = "help", description = "List all commands", args = "[int page]", maxArgsCount = 1)
     public void help(Player player, List<String> args) {
