@@ -1,5 +1,6 @@
 package plugin.commands;
 
+import arc.Core;
 import arc.Events;
 import arc.math.Mathf;
 import arc.struct.ObjectMap;
@@ -73,9 +74,10 @@ public class ChatCommands {
 
     @ChatCommand(name = "js", args = "<str code>", description = "Execute JS code", requiredRank = Ranks.Rank.JS, minArgsCount = 1, isLastArgText = true)
     public void javascript(Player player, List<String> args) {
-        runJs(args.get(0), resp -> {
+        /*runJs(args.get(0), resp -> {
             if (!resp.isEmpty()) player.sendMessage(resp);
-        });
+        });*/
+        Core.app.post(()->player.sendMessage(Vars.mods.getScripts().runConsole(args.get(0))));
     }
 
     @ChatCommand(name = "maps", args = "[int page]", description = "List all maps", maxArgsCount = 1)
