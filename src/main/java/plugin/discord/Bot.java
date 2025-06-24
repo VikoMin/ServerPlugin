@@ -45,10 +45,11 @@ public class Bot {
         });
 
         Events.on(EventType.PlayerJoin.class, event -> Timer.schedule(() -> {
-            PlayerData data = new PlayerData(event.player);
             if (event.player.plainName().startsWith("@")) {
                 return;
             }
+
+            PlayerData data = new PlayerData(event.player);
             if (data.isExist()) {
                 channel.sendMessage("`" + event.player.plainName() + " (" + data.getId() + ")" + " joined the server!" + "`");
             }
@@ -58,8 +59,8 @@ public class Bot {
             if (event.player.plainName().startsWith("@")) {
                 return;
             }
-            PlayerData data = new PlayerData(event.player);
 
+            PlayerData data = new PlayerData(event.player);
             if (data.isExist()) {
                 channel.sendMessage("`" + event.player.plainName() + " (" + data.getId() + ")" + " left the server!" + "`");
             }

@@ -11,7 +11,7 @@ import plugin.configs.ConfigJson;
 
 public class DiscordCommandRegister {
 
-    private static final String prefix = ".";
+    //private static final String prefix = ".";
     public static Seq<DiscordCommand> commands = new Seq<>();
     private final DiscordCommand c;
 
