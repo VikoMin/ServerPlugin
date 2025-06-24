@@ -10,25 +10,15 @@ import mindustry.net.Packets;
 
 public class VoteSession {
     private static VoteSession instance;
-    public static VoteSession getInstance() {
-        return instance;
-    }
-    public static VoteSession newSession(Player target, Player starter, int req, String reason) {
-        if (instance != null) {
-            instance.voteTask.cancel();
-        }
-        instance = new VoteSession(target, starter, req, reason);
-        return instance;
-    }
+    public final Timer.Task voteTask;
     public Player target;
     public int requiredVotes;
     public int currentVotes;
     public Player starter;
     public boolean isAlive;
-    public final Timer.Task voteTask;
     public String reason;
-    private boolean firstVote = true;
     public ObjectIntMap<Player> votes = new ObjectIntMap<>();
+    private boolean firstVote = true;
     private VoteSession(Player target, Player starter, int req, String reason) {
         this.currentVotes = 0;
         this.reason = reason;
@@ -46,6 +36,19 @@ public class VoteSession {
             instance = null;
         }, NetServer.voteDuration);
     }
+
+    public static VoteSession getInstance() {
+        return instance;
+    }
+
+    public static VoteSession newSession(Player target, Player starter, int req, String reason) {
+        if (instance != null) {
+            instance.voteTask.cancel();
+        }
+        instance = new VoteSession(target, starter, req, reason);
+        return instance;
+    }
+
     public void vote(Player player, int sign) {
         if (isVoted(player)) return;
         firstVote = false;
@@ -75,7 +78,7 @@ public class VoteSession {
         var iterator = votes.keys();
         while (iterator.hasNext()) {
             Player entry = iterator.next();
-            if(entry.uuid().equals(player.uuid()) || entry.ip().equals(player.ip())) {
+            if (entry.uuid().equals(player.uuid()) || entry.ip().equals(player.ip())) {
                 player.sendMessage("[scarlet]You've already voted. Sit down.");
                 return true;
             }
