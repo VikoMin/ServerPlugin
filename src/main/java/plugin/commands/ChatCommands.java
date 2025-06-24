@@ -178,7 +178,7 @@ public class ChatCommands {
         plugin.database.wrappers.PlayerData data = new plugin.database.wrappers.PlayerData(player);
         if (args.get(0).length() >= 45 ) {
             player.sendMessage("Too much symbols! Limit is 45");
-        } else if (args.get(0).indexOf("@") > 1) {
+        } else if (args.get(0).chars().filter(c -> c == '@').count() > 1) {
             player.sendMessage("Too much \"@\".");
         } else{
             data.setJoinMessage(args.get(0));
