@@ -6,7 +6,10 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class ConfigJson {
     // literally variables for other shit
@@ -18,6 +21,7 @@ public class ConfigJson {
     public static String moderatorId;
     public static String adminId;
     public static String prefix;
+
     // reads variables from config.json
     public static void read() throws IOException, ParseException {
         try {
@@ -31,7 +35,7 @@ public class ConfigJson {
             moderatorId = (String) object.get("moderatorid");
             adminId = (String) object.get("adminid");
             prefix = (String) object.get("prefix");
-        }catch(Exception e){
+        } catch (Exception e) {
             Log.err("Config reading failed! Creating config file! Make sure to setup everything to prevent further errors!");
             File config = new File(Vars.dataDirectory.absolutePath() + "/" + "config.json");
             FileWriter writer = new FileWriter(Vars.dataDirectory.absolutePath() + "/" + "config.json");

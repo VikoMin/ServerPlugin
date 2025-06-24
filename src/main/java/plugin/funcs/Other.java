@@ -20,13 +20,13 @@ public class Other {
         String title = "\uE86B Добро пожаловать!";
         String description = """
                 [white]Добро пожаловать на [#00bfff]Frost[#99e6ff]Heaven!
-
+                
                 [red]<[orange]Правила[red]>
                 [#f]\uE815 [white]Запрещён гриф, слив ресурсов, юнитов и прочие помехи игре.
                 [#f]\uE815 [white]Запрещён NSFW контент, реклама в любом виде.
                 [#f]\uE815 [white]Запрещены низкоэффективные и громоздкие схемы.
                 [green]\uE800 [white]Ведите себя адекватно, не мешайте игре и общению.
-
+                
                 [white]Используйте /help чтобы увидеть все доступные команды.
                 [blue]\uE80D И обязательно зайдите на наш дискорд-сервер.""";
         String button1 = "Закрыть";
@@ -58,9 +58,9 @@ public class Other {
             }
         }
         UsidBan ban = new UsidBan(player);
-        if (ban.isExist()){
+        if (ban.isExist()) {
             if (ban.isExpired()) ban.delete();
-            else{
+            else {
                 String timeUntilUnban = Bundle.formatDuration(ban.getUnbanTime() - Time.millis());
                 player.kick("[red]You have been banned!\n\n" + "[white]Duration: " + timeUntilUnban + " until unban\nYour ID: " + data.getId() + "\n\nIf you think this is a mistake, make sure to appeal ban in our discord: " + discordUrl, 0);
             }

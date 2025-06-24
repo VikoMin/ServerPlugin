@@ -3,6 +3,19 @@ package plugin.models;
 import java.util.Arrays;
 
 public class Ranks {
+    public static Rank getRank(int ordinal) {
+        if (ordinal < Rank.values().length)
+            return Arrays.stream(Rank.values()).toList().get(ordinal);
+        return Rank.None;
+    }
+
+    public static Rank getRank(String name) {
+        for (Rank rank : Rank.values())
+            if (rank.name.equalsIgnoreCase(name) || Integer.toString(rank.ordinal()).equals(name))
+                return rank;
+        return Rank.None;
+    }
+
     public enum Rank {
         None("none", "none", "Rank that does not exist. Uses if cannot get player rank"),
         Player("Player", "[white]Player", "Basic rank that given to all players on our server"),
@@ -31,20 +44,9 @@ public class Ranks {
         public String getColoredName() {
             return coloredName;
         }
-        public boolean equal(Rank rank){
+
+        public boolean equal(Rank rank) {
             return this.ordinal() >= rank.ordinal();
         }
-    }
-
-    public static Rank getRank(int ordinal){
-        if (ordinal < Rank.values().length)
-            return Arrays.stream(Rank.values()).toList().get(ordinal);
-        return Rank.None;
-    }
-    public static Rank getRank(String name) {
-        for (Rank rank: Rank.values())
-            if (rank.name.equalsIgnoreCase(name) || Integer.toString(rank.ordinal()).equals(name))
-                return rank;
-        return Rank.None;
     }
 }

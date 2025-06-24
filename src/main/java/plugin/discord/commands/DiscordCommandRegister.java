@@ -5,50 +5,25 @@ import arc.struct.Seq;
 import arc.util.Log;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.user.User;
-import plugin.configs.ConfigJson;
 import plugin.Utilities;
+import plugin.configs.ConfigJson;
 
 
 public class DiscordCommandRegister {
 
     private static final String prefix = ".";
-    private final DiscordCommand c;
     public static Seq<DiscordCommand> commands = new Seq<>();
+    private final DiscordCommand c;
+
     public DiscordCommandRegister(String name) {
         c = new DiscordCommand();
         c.name = name;
     }
+
     public static DiscordCommandRegister create(String name) {
         return new DiscordCommandRegister(name);
     }
-    public DiscordCommandRegister addRole(long role) {
-        c.allowedRoles.add(role);
-        return this;
-    }
-    public DiscordCommandRegister addRole(String role) {
-        c.allowedRoles.add(Long.parseLong(role));
-        return this;
-    }
-    public DiscordCommandRegister args(String args) {
-        c.args = args;
-        return this;
-    }
-    public DiscordCommandRegister requiredArgs(int h) {
-        c.requiredArgs = h;
-        return this;
-    }
-    public DiscordCommandRegister desc(String desc) {
-        c.desc = desc;
-        return this;
-    }
-    public void build(Cons2<Message, String> acc) {
-        c.acceptor = acc;
-        commands.add(c);
-    }
-    public DiscordCommandRegister hidden(boolean hidden) {
-        c.hidden = hidden;
-        return this;
-    }
+
     public static void handleMessage(Message message) {
         if (message == null) return;
         String text = message.getContent();
@@ -57,7 +32,7 @@ public class DiscordCommandRegister {
         if (!text.startsWith(ConfigJson.prefix)) return;
         text = text.substring(ConfigJson.prefix.length());
         String[] parts = text.split(" ");
-        for (DiscordCommand command: commands) {
+        for (DiscordCommand command : commands) {
             if (command.name.equals(parts[0])) {
                 if (!command.allowedRoles.isEmpty()) {
                     var server = message.getServer().orElse(null);
@@ -79,6 +54,41 @@ public class DiscordCommandRegister {
                 }
             }
         }
+    }
+
+    public DiscordCommandRegister addRole(long role) {
+        c.allowedRoles.add(role);
+        return this;
+    }
+
+    public DiscordCommandRegister addRole(String role) {
+        c.allowedRoles.add(Long.parseLong(role));
+        return this;
+    }
+
+    public DiscordCommandRegister args(String args) {
+        c.args = args;
+        return this;
+    }
+
+    public DiscordCommandRegister requiredArgs(int h) {
+        c.requiredArgs = h;
+        return this;
+    }
+
+    public DiscordCommandRegister desc(String desc) {
+        c.desc = desc;
+        return this;
+    }
+
+    public void build(Cons2<Message, String> acc) {
+        c.acceptor = acc;
+        commands.add(c);
+    }
+
+    public DiscordCommandRegister hidden(boolean hidden) {
+        c.hidden = hidden;
+        return this;
     }
 
 }

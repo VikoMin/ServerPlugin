@@ -17,8 +17,8 @@ import static mindustry.Vars.emptyTile;
 import static mindustry.Vars.world;
 
 public class History {
-    static Seq<HistoryTile> historyTilesSeq = new Seq<>();
     public static Seq<String> historyPlayers = new Seq<>();
+    static Seq<HistoryTile> historyTilesSeq = new Seq<>();
 
     public static void loadHistory() {
         Events.on(EventType.BlockBuildEndEvent.class, event -> {

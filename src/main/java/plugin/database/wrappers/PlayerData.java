@@ -18,6 +18,31 @@ import static plugin.Plugin.players;
 public class PlayerData {
     private final plugin.database.collections.PlayerData collection;
 
+    public PlayerData(plugin.database.collections.PlayerData collection) {
+        this.collection = collection;
+    }
+
+    public PlayerData(int id) {
+        collection = players.find(eq("_id", id)).first();
+    }
+
+    public PlayerData(String uuid) {
+        collection = players.find(eq("uuid", uuid)).first();
+    }
+
+    public PlayerData(NetConnection player) {
+        collection = players.find(eq("uuid", player.uuid)).first();
+    }
+
+    public PlayerData(Player player) {
+        collection = Optional.ofNullable(players.find(eq("uuid", player.uuid())).first()).orElse(
+                new plugin.database.collections.PlayerData(getNextID(), player.uuid()));
+        if (!collection.names.contains(player.plainName())) collection.names.add(player.plainName());
+        collection.rawName = player.name();
+        if (!collection.ips.contains(player.con.address)) collection.ips.add(player.con.address);
+        commit();
+    }
+
     public static ArrayList<PlayerData> findByRank(String rankName) {
         ArrayList<PlayerData> output = new ArrayList<>();
         Ranks.Rank rank = Ranks.getRank(rankName);
@@ -33,26 +58,9 @@ public class PlayerData {
         return (data.isExist()) ? data.getId() : snowflake;
     }
 
-    public PlayerData(plugin.database.collections.PlayerData collection){
-        this.collection = collection;
-    }
-    public PlayerData(int id) {
-        collection = players.find(eq("_id", id)).first();
-    }
-
-    public PlayerData(String uuid) {
-        collection = players.find(eq("uuid", uuid)).first();
-    }
-    public PlayerData(NetConnection player){
-        collection = players.find(eq("uuid", player.uuid)).first();
-    }
-    public PlayerData(Player player) {
-        collection = Optional.ofNullable(players.find(eq("uuid", player.uuid())).first()).orElse(
-                new plugin.database.collections.PlayerData(getNextID(), player.uuid()));
-        if (!collection.names.contains(player.plainName())) collection.names.add(player.plainName());
-        collection.rawName = player.name();
-        if (!collection.ips.contains(player.con.address)) collection.ips.add(player.con.address);
-        commit();
+    public static int getNextID() {
+        plugin.database.collections.PlayerData data = players.find().sort(new BasicDBObject("_id", -1)).first();
+        return (data == null) ? 0 : data.id + 1;
     }
 
     public boolean isExist() {
@@ -63,53 +71,27 @@ public class PlayerData {
         players.replaceOne(eq("_id", collection.id), collection, new ReplaceOptions().upsert(true));
     }
 
-    public static int getNextID() {
-        plugin.database.collections.PlayerData data = players.find().sort(new BasicDBObject("_id", -1)).first();
-        return (data == null) ? 0 : data.id + 1;
-    }
-
-    public Player getPlayer(){
-        return Groups.player.find(t-> t.uuid().equals(getUuid()));
-    }
-
-    //setters
-    public void setLastBanTime(long time) {
-        collection.lastBan = time;
-        commit();
-    }
-
-    public void setRank(Ranks.Rank rank) {
-        collection.rank = rank.ordinal();
-        commit();
-    }
-    public void setDiscordId(long id){
-        collection.discordId = id;
-        commit();
-    }
-
-    public void setRank(String rank) {
-        collection.rank = Ranks.getRank(rank).ordinal();
-        commit();
+    public Player getPlayer() {
+        return Groups.player.find(t -> t.uuid().equals(getUuid()));
     }
 
     public void setVip(boolean isVip) {
         collection.isVip = isVip;
         commit();
     }
-    public void setJoinMessage(String message){
-        collection.joinMessage = message;
-        commit();
-    }
+
     public void addUsid(String usid) {
         if (!collection.adminUsids.contains(usid)) {
             collection.adminUsids.add(usid);
             commit();
         }
     }
+
     public void removeUsids() {
         collection.adminUsids.clear();
         commit();
     }
+
     //mutators
     public void increasePlaytime(long value) {
         collection.playtime += value;
@@ -147,10 +129,25 @@ public class PlayerData {
         return Ranks.Rank.None;
     }
 
+    public void setRank(Ranks.Rank rank) {
+        collection.rank = rank.ordinal();
+        commit();
+    }
+
+    public void setRank(String rank) {
+        collection.rank = Ranks.getRank(rank).ordinal();
+        commit();
+    }
+
     public String getJoinMessage() {
         if (isExist())
             return collection.joinMessage;
         return "@ joined!";
+    }
+
+    public void setJoinMessage(String message) {
+        collection.joinMessage = message;
+        commit();
     }
 
     public ArrayList<String> getIPs() {
@@ -165,10 +162,21 @@ public class PlayerData {
         return -1;
     }
 
+    //setters
+    public void setLastBanTime(long time) {
+        collection.lastBan = time;
+        commit();
+    }
+
     public long getDiscordId() {
         if (isExist())
             return collection.discordId;
         return 0;
+    }
+
+    public void setDiscordId(long id) {
+        collection.discordId = id;
+        commit();
     }
 
     public long getPlaytime() {
@@ -176,6 +184,7 @@ public class PlayerData {
             return collection.playtime;
         return 0;
     }
+
     public ArrayList<String> getAdminUsids() {
         if (isExist()) return collection.adminUsids;
         return new ArrayList<>();

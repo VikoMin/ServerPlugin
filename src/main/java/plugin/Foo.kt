@@ -1,20 +1,24 @@
 package plugin
 
-import arc.util.*
-import arc.util.serialization.*
-import mindustry.*
-import mindustry.gen.*
-import mindustry.mod.*
-import mindustry.net.*
-import mindustry.net.Administration.*
+import arc.util.Log
+import arc.util.Reflect
+import arc.util.serialization.Jval
+import mindustry.Vars
+import mindustry.gen.Call
+import mindustry.gen.Player
+import mindustry.net.Administration.Config
 import plugin.commands.handlers.ChatListener
-import java.io.*
 
 object Foo {
     private val sb = StringBuilder()
     private val version by lazy { Vars.mods.getMod("serverlugin").meta.version }
-    private val transmissions = Config("fooForwardTransmissions", "Whether client transmissions (chat, dms, and more) are relayed through the server", true) { enableTransmissions() }
-    private val commands = Config("fooCommandList", "Whether Foo's users are sent the command list on join (for autocomplete)", true)
+    private val transmissions = Config(
+        "fooForwardTransmissions",
+        "Whether client transmissions (chat, dms, and more) are relayed through the server",
+        true
+    ) { enableTransmissions() }
+    private val commands =
+        Config("fooCommandList", "Whether Foo's users are sent the command list on join (for autocomplete)", true)
 
     /** Called after command creation */
     fun init() {
@@ -52,7 +56,7 @@ object Foo {
                 Vars.netServer.clientCommands.commandList.forEach {
                     add(it.text, it.paramText)
                 }
-                for(commandname in ChatListener.getCOMMANDS().keys) {
+                for (commandname in ChatListener.getCOMMANDS().keys) {
                     add(commandname)
                 }
             })

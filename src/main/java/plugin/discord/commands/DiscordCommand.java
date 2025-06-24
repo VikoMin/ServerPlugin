@@ -12,7 +12,9 @@ public class DiscordCommand {
     public String args = "";
     public String desc;
     public boolean hidden = false;
-    int requiredArgs = 0;
     public Cons2<Message, String> acceptor;
-    public DiscordCommand() {}
+    int requiredArgs = 0;
+
+    public DiscordCommand() {
+    }
 }

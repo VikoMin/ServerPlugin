@@ -16,13 +16,14 @@ import mindustry.maps.Map;
 import mindustry.net.Administration;
 import mindustry.server.ServerControl;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
+import plugin.Utilities;
 import plugin.configs.ConfigJson;
+import plugin.database.wrappers.PlayerData;
 import plugin.database.wrappers.UsidBan;
 import plugin.discord.commands.DiscordCommandRegister;
 import plugin.models.Ranks;
-import plugin.database.wrappers.PlayerData;
-import plugin.Utilities;
 import useful.Bundle;
+
 import java.awt.*;
 import java.io.*;
 import java.time.Duration;
@@ -31,16 +32,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+
 import static arc.util.Strings.canParseInt;
 import static arc.util.Strings.stripColors;
 import static mindustry.Vars.netServer;
 import static plugin.configs.ConfigJson.discordUrl;
 import static plugin.discord.Bot.api;
 import static plugin.discord.Embed.banEmbed;
-import static plugin.models.Ranks.getRank;
-import static plugin.funcs.Other.*;
+import static plugin.funcs.Other.reloadMaps;
 import static plugin.menus.MenuHandler.loginMenu;
 import static plugin.menus.MenuHandler.loginMenuFunction;
+import static plugin.models.Ranks.getRank;
 
 public class Commands {
     public static void load() {
@@ -48,12 +50,12 @@ public class Commands {
                 .desc("See all available commands")
                 .build((message, string) -> {
                     var paged = new PagedEmbed();
-                    Utilities.splitBy(DiscordCommandRegister.commands.select(c ->!c.hidden), 5).each(s -> {
-                       var page = new PagedEmbed.EmbedPage("Available commands", Color.magenta);
-                       s.each(command -> {
-                           page.addField(command.desc, command.name + " " + command.args);
-                       });
-                       paged.addPage(page);
+                    Utilities.splitBy(DiscordCommandRegister.commands.select(c -> !c.hidden), 5).each(s -> {
+                        var page = new PagedEmbed.EmbedPage("Available commands", Color.magenta);
+                        s.each(command -> {
+                            page.addField(command.desc, command.name + " " + command.args);
+                        });
+                        paged.addPage(page);
                     });
                     paged.send(message.getChannel());
                 });
@@ -61,7 +63,7 @@ public class Commands {
                 .desc("See all available ranks")
                 .build((message, string) -> {
                     EmbedBuilder embed = new EmbedBuilder().setTitle("Ranks").setColor(Color.decode("#00BFFF"));
-                    for (Ranks.Rank rank: Ranks.Rank.values())
+                    for (Ranks.Rank rank : Ranks.Rank.values())
                         embed.addField(rank.getName(), rank.getDescription());
                     message.getChannel().sendMessage(embed);
                 });
@@ -116,12 +118,12 @@ public class Commands {
 
                     sb.append("Map: ").append(Vars.state.map.plainName().replace("@", "")).append("\n");
                     sb.append("FPS: ").append(Core.graphics.getFramesPerSecond()).append("\n");
-                    if(Groups.player.isEmpty()) {
+                    if (Groups.player.isEmpty()) {
                         sb.append("No players are currently in the server.\n");
                     } else {
                         sb.append("Total: ").append(Groups.player.size());
                         sb.append("```\n");
-                        Groups.player.each(p->sb.append(p.admin ? "[A]" : "[P]").append(p.plainName().replace("`", "").replace("\\", "")+"\n"));
+                        Groups.player.each(p -> sb.append(p.admin ? "[A]" : "[P]").append(p.plainName().replace("`", "").replace("\\", "") + "\n"));
                         sb.append("```");
                     }
                     message.getChannel().sendMessage(sb.toString());
@@ -154,10 +156,10 @@ public class Commands {
                     } else {
                         plr.con.kick("[red]You have been banned!\n\n" + "[white]Reason: " + args[2] + "\nDuration: " + timeUntilUnban + " until unban\nIf you think this is a mistake, make sure to appeal ban in our discord: " + discordUrl, 0);
                         UsidBan.builder()
-                               .setUuid(plr.uuid())
-                               .setUsid(plr.usid())
-                               .setUnbanTime(banTime)
-                               .commit();
+                                .setUuid(plr.uuid())
+                                .setUsid(plr.usid())
+                                .setUnbanTime(banTime)
+                                .commit();
                     }
                     message.getChannel().sendMessage("Banned: " + data.getLastName());
                     Call.sendMessage(data.getLastName() + " has been banned for: " + args[2]);
@@ -204,12 +206,11 @@ public class Commands {
                             if (data.getRank().equal(Ranks.Rank.Moderator)) {
                                 data.addUsid(player.usid());
                                 player.admin(true);
-                            }
-                            else {
+                            } else {
                                 data.removeUsids();
                                 player.admin(false);
                             }
-                        } else if (!data.getRank().equal(Ranks.Rank.Moderator)){
+                        } else if (!data.getRank().equal(Ranks.Rank.Moderator)) {
                             data.removeUsids();
                         }
                     }
@@ -288,7 +289,7 @@ public class Commands {
                     } else {
                         data.setLastBanTime(0L);
                         var usidBan = UsidBan.findByUuid(data.getUuid());
-                        if (usidBan.isExist()){
+                        if (usidBan.isExist()) {
                             usidBan.delete();
                         }
                         message.getChannel().sendMessage(data.getLastName() + " has been unbanned!");
@@ -387,14 +388,14 @@ public class Commands {
                         File readFile = new File(Vars.tmpDirectory.absolutePath() + "/readfile.txt");
                         readFile.createNewFile();
                         FileWriter writer = new FileWriter(readFile);
-                        for (String line : newList){
+                        for (String line : newList) {
                             writer.write(line + "\n");
                         }
                         writer.close();
                         message.getChannel().sendMessage(readFile);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
-                    };
+                    }
                 });
         DiscordCommandRegister.create("backupdb")
                 .desc("Create database backup")

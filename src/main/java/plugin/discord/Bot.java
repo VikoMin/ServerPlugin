@@ -1,7 +1,7 @@
 package plugin.discord;
 
 import arc.Events;
-import arc.util.*;
+import arc.util.Log;
 import arc.util.Timer;
 import mindustry.game.EventType;
 import mindustry.gen.Call;
@@ -11,8 +11,8 @@ import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.intent.Intent;
 import org.javacord.api.event.message.MessageCreateEvent;
 import plugin.configs.ConfigJson;
-import plugin.discord.commands.DiscordCommandRegister;
 import plugin.database.wrappers.PlayerData;
+import plugin.discord.commands.DiscordCommandRegister;
 
 
 @SuppressWarnings("unused")

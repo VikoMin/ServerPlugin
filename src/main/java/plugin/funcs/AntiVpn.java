@@ -14,35 +14,35 @@ public class AntiVpn {
     public static final ArrayList<Subnet> subnets = new ArrayList<>();
 
     public static void loadAntiVPN() {
-                Http.get("https://raw.githubusercontent.com/X4BNet/lists_vpn/main/output/datacenter/ipv4.txt", response -> {
-                    var result = response.getResultAsString().split("\n");
+        Http.get("https://raw.githubusercontent.com/X4BNet/lists_vpn/main/output/datacenter/ipv4.txt", response -> {
+            var result = response.getResultAsString().split("\n");
 
-                    for (var address : result) subnets.add(parseSubnet(address));
+            for (var address : result) subnets.add(parseSubnet(address));
 
-                    Log.info("Fetched @ datacenter subnets.", subnets.size());
-                }, error -> Log.err("Failed to fetch datacenter subnets.", error));
-                Http.get("https://www.gstatic.com/ipranges/goog.json", response -> {
-                    Jval googleJson = Jval.read(new InputStreamReader(response.getResultAsStream()));
-                    for (Jval obj : googleJson.get("prefixes").asArray()){
-                        Jval ip4 = obj.get("Ipv4Prefix");
-                        if (ip4 != null){
-                            subnets.add(parseSubnet(ip4.asString()));
-                        }
-                    }
-                }, error -> Log.err("Failed to fetch datacenter subnets." ,error));
-                Http.get("https://www.gstatic.com/ipranges/cloud.json", response -> {
-                    Jval googleJson = Jval.read(new InputStreamReader(response.getResultAsStream()));
-                    for (Jval obj : googleJson.get("prefixes").asArray()){
-                        Jval ip4 = obj.get("Ipv4Prefix");
-                        if (ip4 != null){
-                            subnets.add(parseSubnet(ip4.asString()));
-                        }
-                    }
-                }, error -> Log.err("Failed to fetch datacenter subnets." ,error));
+            Log.info("Fetched @ datacenter subnets.", subnets.size());
+        }, error -> Log.err("Failed to fetch datacenter subnets.", error));
+        Http.get("https://www.gstatic.com/ipranges/goog.json", response -> {
+            Jval googleJson = Jval.read(new InputStreamReader(response.getResultAsStream()));
+            for (Jval obj : googleJson.get("prefixes").asArray()) {
+                Jval ip4 = obj.get("Ipv4Prefix");
+                if (ip4 != null) {
+                    subnets.add(parseSubnet(ip4.asString()));
+                }
+            }
+        }, error -> Log.err("Failed to fetch datacenter subnets.", error));
+        Http.get("https://www.gstatic.com/ipranges/cloud.json", response -> {
+            Jval googleJson = Jval.read(new InputStreamReader(response.getResultAsStream()));
+            for (Jval obj : googleJson.get("prefixes").asArray()) {
+                Jval ip4 = obj.get("Ipv4Prefix");
+                if (ip4 != null) {
+                    subnets.add(parseSubnet(ip4.asString()));
+                }
+            }
+        }, error -> Log.err("Failed to fetch datacenter subnets.", error));
         InputStream stream = Plugin.class.getResourceAsStream("/azure.json");
         for (Jval value : Jval.read(new InputStreamReader(stream)).get("values").asArray()) {
             for (Jval addressPrefixes : value.get("properties").get("addressPrefixes").asArray()) {
-                if (addressPrefixes.asString().charAt(4) != ':'){
+                if (addressPrefixes.asString().charAt(4) != ':') {
                     subnets.add(parseSubnet(addressPrefixes.asString()));
                 }
             }
@@ -63,6 +63,7 @@ public class AntiVpn {
 
         return false;
     }
+
     private static Subnet parseSubnet(String address) {
         var parts = address.split("/");
         if (parts.length > 2)
@@ -74,7 +75,9 @@ public class AntiVpn {
             for (var token : InetAddress.getByName(parts[0]).getAddress()) {
                 ip = (ip << 8) + (token & 0xFF);
             }
-        }catch(Exception e){Log.err(e);}
+        } catch (Exception e) {
+            Log.err(e);
+        }
         if (parts.length == 2) {
             mask = Integer.parseInt(parts[1]);
             if (mask > 32)
@@ -89,7 +92,8 @@ public class AntiVpn {
     private static class Subnet {
         public final int ip;
         public final int mask;
-        public Subnet(int ip, int mask){
+
+        public Subnet(int ip, int mask) {
             this.ip = ip;
             this.mask = mask;
         }
