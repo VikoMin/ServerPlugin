@@ -108,7 +108,7 @@ public class Plugin extends mindustry.mod.Plugin implements ApplicationListener 
 
         Events.on(EventType.PlayerJoin.class, event -> {
             Player plr = event.player;
-            plr.name = plr.name.replace("@", "");
+            // plr.name = plr.name.replace("@", "");
             if (!plr.admin) welcomeMenu(plr);
             plugin.database.wrappers.PlayerData data = new plugin.database.wrappers.PlayerData(event.player);
             sessions.createSession(plr);
