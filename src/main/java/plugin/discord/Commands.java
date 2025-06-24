@@ -1,5 +1,6 @@
 package plugin.discord;
 
+import arc.Core;
 import arc.Events;
 import arc.struct.ObjectSet;
 import arc.util.Http;
@@ -107,6 +108,23 @@ public class Commands {
                     }
                     list.append("```");
                     message.getChannel().sendMessage(list.toString());
+                });
+        DiscordCommandRegister.create("status")
+                .desc("See server status, e.g. map, players")
+                .build((message, string) -> {
+                    StringBuilder sb = new StringBuilder();
+
+                    sb.append("Map: ").append(Vars.state.map.plainName().replace("@", "")).append("\n");
+                    sb.append("FPS: ").append(Core.graphics.getFramesPerSecond()).append("\n");
+                    if(Groups.player.isEmpty()) {
+                        sb.append("No players are currently in the server.\n");
+                    } else {
+                        sb.append("Total: ").append(Groups.player.size());
+                        sb.append("```\n");
+                        Groups.player.each(p->sb.append(p.admin ? "[A]" : "[P]").append(p.plainName().replace("`", "").replace("\\", "")+"\n"));
+                        sb.append("```");
+                    }
+                    message.getChannel().sendMessage(sb.toString());
                 });
         DiscordCommandRegister.create("ban")
                 .desc("Ban player")
