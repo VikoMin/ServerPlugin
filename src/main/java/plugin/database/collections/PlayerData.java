@@ -1,6 +1,7 @@
 package plugin.database.collections;
 
 import java.util.ArrayList;
+
 public class PlayerData {
     public int id;
     public String uuid;
@@ -14,8 +15,11 @@ public class PlayerData {
     public long playtime = 0;
     public boolean isVip = false;
     public ArrayList<String> adminUsids = new ArrayList<>();
-    public PlayerData(){} //necessary for mongodb
-    public PlayerData(int id, String uuid){
+
+    public PlayerData() {
+    } //necessary for mongodb
+
+    public PlayerData(int id, String uuid) {
         this.uuid = uuid;
         this.id = id;
     }

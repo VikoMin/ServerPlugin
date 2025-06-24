@@ -1,17 +1,27 @@
 package plugin.discord;
 
 import arc.struct.Seq;
-import arc.util.Log;
 import arc.util.Timer;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.component.ActionRow;
 import org.javacord.api.entity.message.component.Button;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
+
 import java.awt.*;
 
 public class PagedEmbed {
     private static final Seq<PagedEmbed> embeds = new Seq<>();
+    private final Seq<EmbedPage> pages = new Seq<>();
+    public int currentPage = 1;
+    public Message message;
+    public PagedEmbed() {
+        embeds.add(this);
+        Timer.schedule(() -> {
+            embeds.remove(this);
+        }, 1800);
+    }
+
     public static void load() {
         Bot.api.addButtonClickListener(event -> {
             var message = event.getButtonInteraction().getMessage();
@@ -35,22 +45,12 @@ public class PagedEmbed {
         });
     }
 
-
-
-    public int currentPage = 1;
-    private final Seq<EmbedPage> pages = new Seq<>();
-    public Message message;
-    public PagedEmbed() {
-        embeds.add(this);
-        Timer.schedule(() -> {
-            embeds.remove(this);
-        }, 1800);
-    }
     public PagedEmbed addPage(EmbedPage page) {
         page.page = this.pages.size + 1;
         pages.add(page);
         return this;
     }
+
     public void setPage(int page) {
         this.currentPage = page;
         this.message.edit(pages.get(page - 1).getEmbed(pages.size));
@@ -67,18 +67,21 @@ public class PagedEmbed {
         });
 
     }
+
     public static class EmbedPage {
-        public int page;
         private final EmbedBuilder embed;
+        public int page;
 
         public EmbedPage(String title, Color c) {
             this.embed = new EmbedBuilder().setTitle(title);
             this.embed.setColor(c);
         }
+
         public EmbedPage addField(String cont, String name) {
             this.embed.addField(name, cont);
             return this;
         }
+
         public EmbedBuilder getEmbed(int totalPages) {
             return this.embed.setFooter("Page " + this.page + " of " + totalPages);
         }

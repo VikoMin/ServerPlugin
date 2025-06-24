@@ -3,11 +3,10 @@ package plugin.commands;
 import arc.util.CommandHandler;
 import arc.util.Log;
 import arc.util.Timer;
-
 import org.json.simple.parser.ParseException;
+import plugin.database.wrappers.PlayerData;
 import plugin.discord.Bot;
 import plugin.models.Ranks;
-import plugin.database.wrappers.PlayerData;
 
 import java.io.IOException;
 

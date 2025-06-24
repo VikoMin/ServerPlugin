@@ -16,23 +16,23 @@ public class Session {
     private int blocksBuilt = 0;
     private int blocksDestroyed = 0;
 
-    Session(Player player){
+    Session(Player player) {
         connectionTime = Instant.now();
         id = new PlayerData(player).getId();
     }
 
-    public void increaseBlocks(boolean broke){
+    public void increaseBlocks(boolean broke) {
         if (broke)
             blocksDestroyed++;
         else
             blocksBuilt++;
     }
 
-    public void increaseMessages(){
+    public void increaseMessages() {
         messages++;
     }
 
-    public void commit(){
+    public void commit() {
         Instant disconnectionTime = Instant.now();
         PlayerData player = new PlayerData(((int) id));
         player.increasePlaytime(disconnectionTime.getLong(ChronoField.INSTANT_SECONDS) - connectionTime.getLong(ChronoField.INSTANT_SECONDS));
