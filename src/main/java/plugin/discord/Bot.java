@@ -41,7 +41,7 @@ public class Bot {
             if (event.message.startsWith("/")) {
                 return;
             }
-            channel.sendMessage(event.player.plainName().replace("\\", "").replace("`", "\\`").replace("@", "\\@") + ": `" + event.message.replace("\\", "").replace("`", "\\`").replace("@", "\\@") + "`");
+            channel.sendMessage(event.player.plainName().replace("\\", "").replace("`", "\\`").replace("@", "\\@") + ": `" + event.message.replace("\\", "").replace("`", "\\`").replace("@", "\\@").replaceAll("[\\u0F80-\\u107F]{2}$", "") + "`");
         });
 
         Events.on(EventType.PlayerJoin.class, event -> Timer.schedule(() -> {
