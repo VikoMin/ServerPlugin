@@ -55,10 +55,11 @@ public class Bot {
         }, 0.2f));
 
         Events.on(EventType.PlayerLeave.class, event -> Timer.schedule(() -> {
-            PlayerData data = new PlayerData(event.player);
             if (event.player.plainName().startsWith("@")) {
                 return;
             }
+            PlayerData data = new PlayerData(event.player);
+
             if (data.isExist()) {
                 channel.sendMessage("`" + event.player.plainName() + " (" + data.getId() + ")" + " left the server!" + "`");
             }
