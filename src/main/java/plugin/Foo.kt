@@ -11,7 +11,7 @@ import plugin.commands.handlers.ChatListener
 
 object Foo {
     private val sb = StringBuilder()
-    private val version by lazy { Vars.mods.getMod("serverlugin").meta.version }
+    private val version = "2.1"
     private val transmissions = Config(
         "fooForwardTransmissions",
         "Whether client transmissions (chat, dms, and more) are relayed through the server",
