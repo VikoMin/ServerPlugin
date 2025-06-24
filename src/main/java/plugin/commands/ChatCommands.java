@@ -174,9 +174,11 @@ public class ChatCommands {
     @ChatCommand(name = "joinmessage", args = "<str message...>", description = "Makes custom join message! @ -> your name. Make sure this message wont break any rule!", minArgsCount = 1)
     public void joinMessage(Player player, List<String> args) {
         plugin.database.wrappers.PlayerData data = new plugin.database.wrappers.PlayerData(player);
-        if (args.get(0).length() >= 45) {
+        if (args.get(0).length() >= 45 ) {
             player.sendMessage("Too much symbols! Limit is 45");
-        } else {
+        } else if (args.get(0).indexOf("@") > 1) {
+            player.sendMessage("Too much \"@\".");
+        } else{
             data.setJoinMessage(args.get(0));
             player.sendMessage("[green]Changed your join message!");
         }
