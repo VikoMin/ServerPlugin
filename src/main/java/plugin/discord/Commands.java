@@ -126,7 +126,9 @@ public class Commands {
                     } else {
                         sb.append("Total: ").append(Groups.player.size());
                         sb.append("```\n");
-                        Groups.player.each(p -> sb.append(p.admin ? "[A]" : "[P]").append(p.plainName().replace("`", "").replace("\\", "") + "\n"));
+                        Groups.player.each(p ->{
+                            sb.append(p.admin ? "[A]" : "[P]").append(p.plainName().replace("`", "").replace("\\", "") +  new PlayerData(p).getId()+"\n");
+                        });
                         sb.append("```");
                     }
                     String fname = "maprender.png";
