@@ -2,6 +2,9 @@ package plugin.discord;
 
 import arc.Core;
 import arc.Events;
+import arc.files.Fi;
+import arc.graphics.Pixmap;
+import arc.graphics.PixmapIO;
 import arc.struct.ObjectSet;
 import arc.util.Http;
 import arc.util.Log;
@@ -126,7 +129,15 @@ public class Commands {
                         Groups.player.each(p -> sb.append(p.admin ? "[A]" : "[P]").append(p.plainName().replace("`", "").replace("\\", "") + "\n"));
                         sb.append("```");
                     }
-                    message.getChannel().sendMessage(sb.toString());
+                    String fname = "maprender.png";
+                    Pixmap pix = Utilities.generatePreview(Vars.world.tiles);
+                    Fi file = new Fi(fname);
+                    PixmapIO.writePng(file, pix);
+                    pix.dispose();
+
+                    //message.getChannel().sendMessag
+
+                    message.getChannel().sendMessage(sb.toString(), new EmbedBuilder().setImage(file.file()).setColor(Color.cyan));
                 });
         DiscordCommandRegister.create("ban")
                 .desc("Ban player")
