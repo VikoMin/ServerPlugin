@@ -53,11 +53,11 @@ object Foo {
         with(Jval.newObject()) {
             add("prefix", Reflect.get<String>(Vars.netServer.clientCommands, "prefix"))
             add("commands", Jval.newObject().apply {
-                Vars.netServer.clientCommands.commandList.forEach {
+                /*Vars.netServer.clientCommands.commandList.forEach {
                     add(it.text, it.paramText)
-                }
-                for (commandname in ChatListener.getCOMMANDS().keys) {
-                    add(commandname)
+                }*/
+                for (command in ChatListener.getCommands()) {
+                    add(command.name, command.args)
                 }
             })
             Call.clientPacketReliable(player.con, "commandList", this.toString())
