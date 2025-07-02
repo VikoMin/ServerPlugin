@@ -1,7 +1,7 @@
 package plugin.discord;
 
 import arc.Events;
-import arc.util.*;
+import arc.util.Log;
 import arc.util.Timer;
 import mindustry.game.EventType;
 import mindustry.gen.Call;
@@ -11,8 +11,8 @@ import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.intent.Intent;
 import org.javacord.api.event.message.MessageCreateEvent;
 import plugin.configs.ConfigJson;
-import plugin.discord.commands.DiscordCommandRegister;
 import plugin.database.wrappers.PlayerData;
+import plugin.discord.commands.DiscordCommandRegister;
 
 
 @SuppressWarnings("unused")
@@ -41,24 +41,26 @@ public class Bot {
             if (event.message.startsWith("/")) {
                 return;
             }
-            channel.sendMessage(event.player.plainName() + ": `" + event.message.replace("`", "") + "`");
+            channel.sendMessage(event.player.plainName().replace("\\", "").replace("`", "\\`").replace("@", "\\@") + ": `" + event.message.replace("\\", "").replace("`", "\\`").replace("@", "\\@").replaceAll("[\\u0F80-\\u107F]{2}$", "") + "`");
         });
 
         Events.on(EventType.PlayerJoin.class, event -> Timer.schedule(() -> {
-            PlayerData data = new PlayerData(event.player);
             if (event.player.plainName().startsWith("@")) {
                 return;
             }
+
+            PlayerData data = new PlayerData(event.player);
             if (data.isExist()) {
                 channel.sendMessage("`" + event.player.plainName() + " (" + data.getId() + ")" + " joined the server!" + "`");
             }
         }, 0.2f));
 
         Events.on(EventType.PlayerLeave.class, event -> Timer.schedule(() -> {
-            PlayerData data = new PlayerData(event.player);
             if (event.player.plainName().startsWith("@")) {
                 return;
             }
+
+            PlayerData data = new PlayerData(event.player);
             if (data.isExist()) {
                 channel.sendMessage("`" + event.player.plainName() + " (" + data.getId() + ")" + " left the server!" + "`");
             }

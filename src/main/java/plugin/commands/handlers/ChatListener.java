@@ -9,14 +9,16 @@ import plugin.database.wrappers.PlayerData;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ChatListener {
-    private static final Map<String, Method> COMMANDS = new HashMap<>();
-
-
-    private static final ChatCommands LISTENER = new ChatCommands();
     public static final Seq<ChatCommand> commands = new Seq<>();
+    private static final Map<String, Method> COMMANDS = new HashMap<>();
+    private static final ChatCommands LISTENER = new ChatCommands();
+
     static {
 
         for (Method m : LISTENER.getClass().getDeclaredMethods()) {
@@ -30,6 +32,10 @@ public class ChatListener {
 
             }
         }
+    }
+
+    public static Map<String, Method> getCOMMANDS() {
+        return COMMANDS;
     }
 
     public static void handleCommand(Player player, String message) {
@@ -68,7 +74,7 @@ public class ChatListener {
         } catch (IllegalAccessException | InvocationTargetException exception) {
             player.sendMessage("Something went wrong");
             Log.info("\n");
-            for (StackTraceElement el: exception.getStackTrace())
+            for (StackTraceElement el : exception.getStackTrace())
                 Log.info(el);
             Log.info("\n");
         }

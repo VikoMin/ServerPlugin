@@ -3,15 +3,12 @@ package plugin.discord;
 import mindustry.gen.Player;
 import org.javacord.api.entity.message.MessageAuthor;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.javacord.api.entity.permission.Role;
-import org.javacord.api.entity.user.User;
-import plugin.database.wrappers.PlayerData;
 import plugin.Utilities;
+import plugin.database.wrappers.PlayerData;
 import useful.Bundle;
 
 import java.awt.*;
 import java.time.Duration;
-import java.util.Optional;
 
 public class Embed {
 

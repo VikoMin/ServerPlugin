@@ -25,10 +25,10 @@ import org.json.simple.parser.ParseException;
 import plugin.commands.VoteSession;
 import plugin.commands.handlers.ChatListener;
 import plugin.configs.ConfigJson;
+import plugin.database.collections.PlayerData;
 import plugin.database.collections.UsidBan;
 import plugin.discord.Bot;
 import plugin.funcs.AntiVpn;
-import plugin.database.collections.PlayerData;
 import plugin.models.Ranks;
 import plugin.models.Sessions;
 import useful.Bundle;
@@ -38,19 +38,20 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import static com.mongodb.MongoClientSettings.getDefaultCodecRegistry;
-import static mindustry.Vars.*;
+import static mindustry.Vars.net;
+import static mindustry.Vars.netServer;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
-import static plugin.configs.ConfigJson.discordUrl;
-import static plugin.configs.ServersConfig.makeServersConfig;
-import static plugin.menus.BanMenu.loadBanMenu;
-import static plugin.commands.ConsoleCommands.loadServerCommands;
 import static plugin.commands.ChatCommands.*;
+import static plugin.commands.ConsoleCommands.loadServerCommands;
 import static plugin.commands.history.History.historyPlayers;
 import static plugin.commands.history.History.loadHistory;
+import static plugin.configs.ConfigJson.discordUrl;
+import static plugin.configs.ServersConfig.makeServersConfig;
 import static plugin.funcs.AntiVpn.loadAntiVPN;
 import static plugin.funcs.Other.kickIfBanned;
 import static plugin.funcs.Other.welcomeMenu;
+import static plugin.menus.BanMenu.loadBanMenu;
 
 
 public class Plugin extends mindustry.mod.Plugin implements ApplicationListener {
@@ -84,7 +85,7 @@ public class Plugin extends mindustry.mod.Plugin implements ApplicationListener 
         if (!dir.exists())
             dir.mkdir();
         File sessionsCSV = new File("sessions.csv");
-        if (!sessionsCSV.exists()){
+        if (!sessionsCSV.exists()) {
             sessionsCSV.createNewFile();
             FileWriter csv = new FileWriter("sessions.csv");
             csv.append("id;serverPort;connectionTime;disconnectionTime;messages;built;destroyed\n");
@@ -99,19 +100,20 @@ public class Plugin extends mindustry.mod.Plugin implements ApplicationListener 
         loadHistory();
         Log.info("Plugin started!");
         Bundle.load(Plugin.class);
+        Foo.INSTANCE.init();
 
         Events.on(EventType.PlayerConnect.class, event -> {
-                  kickIfBanned(event.player);
+            kickIfBanned(event.player);
         });
 
         Events.on(EventType.PlayerJoin.class, event -> {
             Player plr = event.player;
-            plr.name = plr.name.replace("@", "");
+            // plr.name = plr.name.replace("@", "");
             if (!plr.admin) welcomeMenu(plr);
             plugin.database.wrappers.PlayerData data = new plugin.database.wrappers.PlayerData(event.player);
             sessions.createSession(plr);
             if (data.getRank().equal(Ranks.Rank.Moderator)) {
-              plr.admin(data.getAdminUsids().contains(plr.usid()));
+                plr.admin(data.getAdminUsids().contains(plr.usid()));
             }
             String joinMessage = data.getJoinMessage().trim();
             Call.sendMessage(joinMessage.replace("@", plr.name()) + " [grey][" + data.getId() + "]");

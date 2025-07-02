@@ -1,5 +1,6 @@
 package plugin.commands;
 
+import arc.Core;
 import arc.Events;
 import arc.math.Mathf;
 import arc.struct.ObjectMap;
@@ -22,30 +23,32 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import plugin.commands.annotations.ChatCommand;
 import plugin.commands.handlers.ChatListener;
-import plugin.models.Ranks;
 import plugin.database.collections.PlayerData;
+import plugin.models.Ranks;
 import useful.Bundle;
 
 import java.time.Duration;
-import java.util.*;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static arc.util.Strings.canParseInt;
 import static mindustry.Vars.netServer;
 import static mindustry.core.NetServer.voteCooldown;
-import static plugin.configs.ConfigJson.discordUrl;
 import static plugin.Plugin.players;
 import static plugin.Plugin.servers;
-import static plugin.commands.history.History.historyPlayers;
-import static plugin.funcs.Other.statsMenu;
 import static plugin.Utilities.*;
+import static plugin.commands.history.History.historyPlayers;
+import static plugin.configs.ConfigJson.discordUrl;
+import static plugin.funcs.Other.statsMenu;
 
 @SuppressWarnings("unused")
 public class ChatCommands {
+    private static final ObjectMap<String, Timekeeper> cooldowns = new ObjectMap<>();
     public static AtomicInteger votes = new AtomicInteger(0);
     public static Seq<Player> votedPlayer = new Seq<>();
     public static boolean isVoting = false;
-    private static final ObjectMap<String, Timekeeper> cooldowns = new ObjectMap<>();
 
     @ChatCommand(name = "announce", args = "<str text>", description = "calls an announce", requiredRank = Ranks.Rank.Moderator, minArgsCount = 1, isLastArgText = true)
     public void announce(Player player, List<String> args) {
@@ -71,9 +74,10 @@ public class ChatCommands {
 
     @ChatCommand(name = "js", args = "<str code>", description = "Execute JS code", requiredRank = Ranks.Rank.JS, minArgsCount = 1, isLastArgText = true)
     public void javascript(Player player, List<String> args) {
-        runJs(args.get(0), resp -> {
+        /*runJs(args.get(0), resp -> {
             if (!resp.isEmpty()) player.sendMessage(resp);
-        });
+        });*/
+        Core.app.post(()->player.sendMessage(Vars.mods.getScripts().runConsole(args.get(0))));
     }
 
     @ChatCommand(name = "maps", args = "[int page]", description = "List all maps", maxArgsCount = 1)
@@ -169,12 +173,14 @@ public class ChatCommands {
         player.sendMessage("[green]History has been enabled!");
     }
 
-    @ChatCommand(name = "joinmessage", args = "<str message>", description = "Makes custom join message! @ -> your name. Make sure this message wont break any rule!", minArgsCount = 1)
+    @ChatCommand(name = "joinmessage", args = "<str message...>", description = "Makes custom join message! @ -> your name. Make sure this message wont break any rule!", minArgsCount = 1)
     public void joinMessage(Player player, List<String> args) {
         plugin.database.wrappers.PlayerData data = new plugin.database.wrappers.PlayerData(player);
-        if (args.get(0).length() >= 45) {
+        if (args.get(0).length() >= 45 ) {
             player.sendMessage("Too much symbols! Limit is 45");
-        } else {
+        } else if (args.get(0).chars().filter(c -> c == '@').count() > 1) {
+            player.sendMessage("Too much \"@\".");
+        } else{
             data.setJoinMessage(args.get(0));
             player.sendMessage("[green]Changed your join message!");
         }
@@ -189,18 +195,25 @@ public class ChatCommands {
         String color;
         for (PlayerData data : sort) {
             long playtime = data.playtime;
-            if (place == 1) {color = "[gold]";}
-            else if (place == 2) {color = "[lightgray]";}
-            else if (place == 3) {color = "[#cd7f32]";}
-            else {color = "[white]";}
+
+            if (place == 1) {
+                color = "[gold]";
+            } else if (place == 2) {
+                color = "[lightgray]";
+            } else if (place == 3) {
+                color = "[#cd7f32]";
+            } else {
+                color = "[white]";
+            }
             list.append(color).append("#").append(place).append("[white] - ").append(data.rawName).append(" [white](").append(Bundle.formatDuration(Duration.ofMinutes(playtime))).append("[white])\n");
+
             place++;
         }
         player.sendMessage(list.toString());
     }
 
-    @ChatCommand(name = "serverhop", args = "<str server_name>", description = "Hops to server", minArgsCount = 1)
-    public void serverHop(Player player, List<String> args){
+    /*@ChatCommand(name = "serverhop", args = "<str server_name>", description = "Hops to server", minArgsCount = 1)
+    public void serverHop(Player player, List<String> args) {
         JSONArray array = (JSONArray) servers.get("servers");
         Seq<Server> servers = new Seq<>();
         for (Object object : array) {
@@ -215,7 +228,7 @@ public class ChatCommands {
     }
 
     @ChatCommand(name = "servers", description = "Lists all servers")
-    public void servers(Player player, List<String> args){
+    public void servers(Player player, List<String> args) {
         JSONArray array = (JSONArray) servers.get("servers");
         StringBuilder list = new StringBuilder();
         list.append("[yellow]SERVER LIST:\n\n[white]");
@@ -224,7 +237,8 @@ public class ChatCommands {
             list.append(jsonObject.get("servername")).append(": ").append(jsonObject.get("ip")).append(":").append(jsonObject.get("port")).append("\n");
         }
         player.sendMessage(list.toString());
-    }
+    }*/
+
     @ChatCommand(name = "help", description = "List all commands", args = "[int page]", maxArgsCount = 1)
     public void help(Player player, List<String> args) {
         int page = 1;
@@ -232,38 +246,41 @@ public class ChatCommands {
         int commandsPerPage = 6;
         int pages = Mathf.ceil((float) ChatListener.commands.size / commandsPerPage);
         page--;
-        if(page >= pages || page < 0){
+        if (page >= pages || page < 0) {
             player.sendMessage("[scarlet]'page' must be a number between[orange] 1[] and[orange] " + pages + "[scarlet].");
             return;
         }
         StringBuilder result = new StringBuilder();
         result.append(Strings.format("[orange]-- Commands Page[lightgray] @[gray]/[lightgray]@[orange] --\n\n", (page + 1), pages));
 
-        for (int i = commandsPerPage * page; i < Math.min(commandsPerPage * (page + 1), ChatListener.commands.size); i++){
+        for (int i = commandsPerPage * page; i < Math.min(commandsPerPage * (page + 1), ChatListener.commands.size); i++) {
             ChatCommand command = ChatListener.commands.get(i);
             result.append("[orange] /").append(command.name()).append(command.args().isEmpty() ? "" : " [white]").append(command.args()).append("[lightgray] - ").append(command.description()).append("\n");
         }
         player.sendMessage(result.toString());
     }
+
     @ChatCommand(name = "t", description = "Send a message only to your teammates.", args = "<str message...>", minArgsCount = 1, isLastArgText = true)
     public void t(Player player, List<String> args) {
         String message = Vars.netServer.admins.filterMessage(player, Strings.join(" ", args));
-        if(message != null){
+        if (message != null) {
             String raw = "[#" + player.team().color.toString() + "]<T> " + Vars.netServer.chatFormatter.format(player, message);
             Groups.player.each(p -> p.team() == player.team(), o -> o.sendMessage(raw, player, message));
         }
     }
+
     @ChatCommand(name = "a", description = "Send a message only to admins.", args = "<str message...>", minArgsCount = 1, isLastArgText = true, requiredRank = Ranks.Rank.Moderator)
     public void a(Player player, List<String> args) {
         String raw = "[#" + Pal.adminChat.toString() + "]<A> " + Vars.netServer.chatFormatter.format(player, Strings.join(" ", args));
         Groups.player.each(Player::admin, a -> a.sendMessage(raw, player, Strings.join(" ", args)));
     }
+
     @ChatCommand(name = "sync", description = "Re-synchronize world state.")
     public void sync(Player player, List<String> args) {
-        if(player.isLocal()){
+        if (player.isLocal()) {
             player.sendMessage("[scarlet]Re-synchronizing as the host is pointless.");
         } else {
-            if(Time.timeSinceMillis(player.getInfo().lastSyncTime) < 1000 * 5){
+            if (Time.timeSinceMillis(player.getInfo().lastSyncTime) < 1000 * 5) {
                 player.sendMessage("[scarlet]You may only /sync every 5 seconds.");
                 return;
             }
@@ -272,6 +289,7 @@ public class ChatCommands {
             netServer.sendWorldData(player);
         }
     }
+
     @ChatCommand(name = "votekick", description = "Vote to kick a player with a valid reason.", args = "[player] [reason...]", maxArgsCount = 2, isLastArgText = true)
     public void votekick(Player player, List<String> args) {
         var session = VoteSession.getInstance();
@@ -330,6 +348,7 @@ public class ChatCommands {
 
         }
     }
+
     @ChatCommand(name = "vote", description = "Vote to kick the current player. Admin can cancel the voting with 'c'.", args = "<y/n/c>", minArgsCount = 1)
     public void vote(Player player, List<String> args) {
         VoteSession session = VoteSession.getInstance();
