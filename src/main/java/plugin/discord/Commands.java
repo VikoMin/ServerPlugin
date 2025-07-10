@@ -133,7 +133,7 @@ public class Commands {
                     }
                     String fname = "maprender.png";
                     Pixmap pix = Utilities.generatePreview(Vars.world.tiles);
-                    Fi file = new Fi(fname);
+                    Fi file = Core.files.local("config/"+fname);
                     PixmapIO.writePng(file, pix);
                     pix.dispose();
 

@@ -37,6 +37,9 @@ public class ChatListener {
     public static Map<String, Method> getCOMMANDS() {
         return COMMANDS;
     }
+    public static Seq<ChatCommand> getCommands() {
+        return commands;
+    }
 
     public static void handleCommand(Player player, String message) {
         List<String> args = new ArrayList<>(List.of(message.split(" ")));
