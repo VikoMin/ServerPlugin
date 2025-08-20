@@ -232,6 +232,7 @@ public class Commands {
                 .desc("")
                 .requiredArgs(1)
                 .args("<args>")
+                .addRole(ConfigJson.moderatorId)
                 .build((message, string) -> {
                     ArrayList<PlayerData> players = PlayerData.findByRank(string);
                     if (players.isEmpty()) {
